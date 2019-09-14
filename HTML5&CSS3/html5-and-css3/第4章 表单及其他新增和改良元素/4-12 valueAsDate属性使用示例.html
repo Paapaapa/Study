@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>valueAsDate属性示例</title>
+	</head>
+	<body>
+		<form>
+			<input type=date id="date">
+			<input type=button value=dianji onclick="alert(document.getElementById('date').valueAsNumber)">
+			<script>
+				document.getElementById('date').valueAsDate=new Date();
+			</script>
+		</form>
+	</body>
+</html>
+
+<!--
+	H5中，新增的用于输入日期和时间的元素具有valueAsDate属性，用于设置或获取UTC日期和时间
+	valueAsNumber属性用于设置或获取元素中设置的日期和时间被转换后的整数值（自1970年1月1日0时0分0秒后经过的毫秒数）
+	-->

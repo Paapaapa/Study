@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>valueAsNumber属性使用示例</title>
+	</head>
+	<script>
+		function sum()
+		{
+			var num1=document.getElementById("num1").valueAsNumber;
+			var num2=document.getElementById("num2").valueAsNumber;
+			document.getElementById("result").valueAsNumber=num1+num2;
+		}
+	</script>
+	<body>
+		<form>
+			<input type=number id=num1>+
+		    <input type=number id=num2>=
+		    <input type=number readonly id=result>
+		    <input type=button value=jisuan onclick=sum()>
+		</form>
+	</body>
+</html>
+
+<!--
+	valueAsNumber属性可以设置和读取number元素中数值
+	readonly 属性规定输入字段为只读,只读字段是不能修改的。不过，用户仍然可以使用 tab 键切换到该字段，还可以选中或拷贝其文本。
+-->

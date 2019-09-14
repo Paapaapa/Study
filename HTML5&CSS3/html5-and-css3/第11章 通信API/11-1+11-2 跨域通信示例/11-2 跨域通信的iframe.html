@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript">
+window.addEventListener("message", function(ev) 
+{
+    if (ev.origin != "http://localhost:8020") 
+    {//ev.origin表示获取消息的发送源（域名加端口号）
+        return;
+    }
+    document.body.innerHTML = "从"+ev.origin + "那里传来的消息。<br>\""+ ev.data + "\"";
+    // (5) 向主页面发送消息
+    //ev.data表示取得的消息内容（任何js对象）
+    ev.source.postMessage("你好。这里是" + this.location, ev.origin);
+    //ev.source指获取接收消息的窗口对象（窗口的代理对象）
+}, false);
+</script>
+</head>
+<body></body>
+</html>

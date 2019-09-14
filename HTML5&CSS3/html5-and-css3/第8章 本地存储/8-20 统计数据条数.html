@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>统计数据条数</title>
+	</head>
+	<script>
+		window.indexedDB=window.indexedDB||window.webkitIndexedDB||window.mozIndexedDB||window.msIndexedDB;
+		window.IDBTransaction=window.IDBTransaction||window.webkitIDBTransaction||window.msIDBTransaction;
+		window.IDBKeyRange=window.IDBKeyRange||window.webkitIDBKeyRange||window.msIDBKeyRange;
+		window.IDBCursor=window.IDBCursor||window.webkitIDBCursor||window.msIDBCursor;
+		var dbname='indexeddbtest';//数据库名
+		var dbversion=20150608;//版本号
+		var idb;
+		
+		function countdata()
+		{
+			var dbconnect=indexedDB.open(dbname,dbversion);
+			dbconnect.onsuccess=function(e)
+			{
+				idb=e.target.result;
+				alert('连接成功');
+				var tx=idb.transaction(['users'],"readonly");
+				var store=tx.objectStore('users');
+				var req=store.count();//统计仓库中的数据记录条数
+				req.onsuccess=function(){
+					alert('共有'+this.result+'条记录');
+			    };
+			};
+			dbconnect.onerror=function()
+			{
+				alert('连接失败！');
+			};
+		}
+	</script>
+	<body>
+		<input type="button" onclick="countdata()" value="统计数据条数">
+	</body>
+</html>

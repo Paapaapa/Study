@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>上传文件</title>
+	</head>
+	   <script>
+	function uploadfile()
+	{
+		var formdata=new FormData(form);//代表需要发送的表单数据
+		var files=document.getElementById("file").files;
+		for(var i=0;i<files.length;i++)
+		{
+			var file=files[i];
+			formdata.append('myfile[]',file);
+		}
+		var xhr=new XMLHttpRequest();
+		xhr.open('POST','13-8 test.php',true);
+		xhr.onload=function(e)
+		{
+			if(this.status==200)
+			{
+				document.getElementById("result").innerHTML=this.response;
+			}
+		};
+		xhr.send(formdata);
+	}
+    </script>
+	<body>
+		<form id="form1" enctype="multipart/form-data">
+			文件：<input type="file" id="file" multiple=""/>
+			<input type="button" value="上传文件" onclick="uploadfile()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

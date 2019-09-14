@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>申请磁盘配额</title>
+	</head>
+	<script>
+		function getquota()
+		{
+			var size=document.getElementById("capacity").value;
+			//向用户计算机申请磁盘配额
+			window.webkitStorageInfo.requestQuota(PERSISTENT,size,
+			function(grantedBytes)//申请成功执行回调函数
+			{
+				var text="申请磁盘配额成功<br>磁盘配额尺寸：";
+				var intbytes;
+				if(grantedBytes>=1024*1024*1024)
+				{
+					intbytes=Maths.floor(grantedBytes/(1024*1024*1024));
+					text+=intbytes+"GB";
+					grantedBytes=grantedBytes%(1024*1024*1024);
+				}
+				if(grantedBytes>=1024*1024)
+				{
+					intbytes=Maths.floor(grantedBytes/(1024*1024));
+					text+=intbytes+"MB";
+					grantedBytes=grantedBytes%(1024*1024);
+				}
+				if(grantedBytes>=1024)
+				{
+					intbytes=Maths.floor(grantedBytes/1024);
+					text+=intbytes+"KB";
+					grantedBytes=grantedBytes%1024;
+				}
+				text+=grantedBytes+"Bytes";
+				document.getElementById("result").innerHTML=text;
+			},
+			errorhandler);
+		}
+		function errorhandler(e)//申请失败执行回调函数
+		{
+			alert('申请失败！');
+		}
+	</script>
+	<body>
+		<h1>申请磁盘配额</h1>
+		<form>
+			<input type="text" id="capacity" value="1024">
+			<input type="button" value="申请磁盘配额" onclick="getquota()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

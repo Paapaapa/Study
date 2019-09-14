@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>手工交换SDP信息与ICE信息</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+	</head>
+	<body>
+		<button type="button" onclick="startvideo()">开始捕获视频信息</button>
+		<button type="button" onclick="stopvideo()">停止捕获视频信息</button>
+		<button type="button" onclick="connect()">建立连接</button>
+		<button type="button" onclick="hangup()">挂断</button>
+		<br>
+		<div>
+			<video id="local-video" autoplay="" style="width:240px;height:180px;border:1px solid black;"></video>
+			<video id="remote-video" autoplay="" style="width:240px;height:180px;border:1px solid black;"></video>
+		</div>
+		
+		<p>
+			要发送的SDP信息：<br>
+				<textarea id="text-for-send-sdp" rows="5" cols="100" disabled="disabled">1111</textarea>		
+		</p>
+		
+		<p>
+			接收到的SDP信息：<br>
+				<textarea id="text-for-receive-sdp" rows="5" cols="100" ></textarea>	
+				<br>
+				<button onclick="onsdp()">接收SDP</button>
+		</p>
+		
+		<p>
+		要发送的ICE候选者信息：<br>
+				<textarea id="text-for-send-ice" rows="5" cols="100" disabled="disabled">1111</textarea>		
+	    </p>
+	    
+	    	<p>
+			接收到的ICE候选者信息：<br>
+				<textarea id="text-for-receive-ice" rows="5" cols="100" ></textarea>	
+				<br>
+				<button onclick="onice()">接收ICE候选者</button>
+		</p>
+		
+		<script>
+			var localvideo=document.getElementById('local-video');
+			var remotevideo=document.getElementById('remote-video');
+			var localstream=null;
+			var peerconnection=null;
+			var peerstarted=false;
+			var mediaconstraints={'mandatory':{'OfferToReceiveAudio':false,'OfferToReceiveVideo':true}};//表示接受对方传来的视频，不接收音频
+			var textforsendsdp=document.getElementById('text-for-send-sdp');
+			var textforsendice=document.getElementById('text-for-send-ice');
+			var texttoreceivesdp=document.getElementById('text-for-receive-sdp');
+			var texttoreceiveice=document.getElementById('text-for-receive-ice');
+			var iceseparator='---ICE候选者---';
+			var cr=String.fromCharCode(13);
+			
+			function onsdp()
+			{
+				var text=texttoreceivesdp.value;
+				var evt=JSON.parse(text);
+				if(peerconnection)
+				{
+					onanswer(evt);
+				}else{
+					onoffer(evt);
+				}
+				texttoreceivesdp.value="";
+			}
+			
+			function onice()
+			{
+				var text=texttoreceiveice.value;
+				var arr=text.split(iceseparator);//切割ICE候选者信息
+				for(var i=1,len=arr.length;i<len;i++)
+				{//取出候选者信息并传递给oncandidate函数
+					var evt=JSON.parse(arr[i]);
+					oncandidate(evt);
+				}
+				texttoreceiveice.value="";
+			}
+			
+			function onoffer(evt)
+			{
+				console.log("接受到offer···");
+				console.log(evt);
+				setoffer(evt);
+				sendanswer(evt);
+			}
+			
+			function onanswer(evt)
+			{
+				console.log("接受到answer···");
+				console.log(evt);
+				setanswer(evt);
+			}
+			
+			function oncandidate(evt)
+			{
+				var candidate=new RTCIceCandidate({sdpMLineIndex:evt.sdpMLineIndex,sdpMid:evt.sdpMid,candidate:evt.candidate});
+				console.log("接收到candidate···");
+				console.log(candidate);
+				peerconnection.addIceCandidate(candidate);//将每一个ICE候选者信息传递给WebRTC连接对象
+			}
+			
+			function sendsdp(sdp)
+			{
+				var text=JSON.stringify(sdp);
+				console.log(text);
+				textforsendsdp.value=text;
+			}
+			
+			function sendcandidate(candidate)
+			{
+				var text=JSON.stringify(candidate);
+				console.log(text);
+				textforsendice.value=(textforsendice.value+cr+iceseparator+cr+text+cr);
+				textforsendice.scrollTop=textforsendice.scrollHeight;
+			}
+			//视频处理
+			function startvideo()
+			{
+				navigator.webkitGetUserMedia({video:true,audio:false},
+				function(stream)
+				{
+					localstream=stream;
+					localvideo.src=window.URL.createObjectURL(stream);
+					localvideo.play();
+					localvideo.volume=0;
+				},
+				function(error)
+				{
+					console.error('发生了一个错误：【错误代码：'+error.code+'】');
+					return;
+				});
+			}
+			
+			function stopvideo()
+			{
+				localvideo.src="";
+				localstream.stop();
+			}
+			//处理连接
+			function preparenewconnection()
+			{
+				var pcconfig={"iceServers":[]};//用于配置WebRTC通信时使用的ICE服务器
+				var peer=null;
+				try{
+					peer=new webkitRTCPeerConnection(pcconfig);//创建代表WebRTC连接的RTCPeerConnection对象
+				}catch(e)
+				{
+					console.log("建立连接失败，错误："+e.message);
+				}
+				peer.onicecandidate=function(evt)//当ICE发现网络候选者时会触发此事件
+				{
+					if(evt.candidate)
+					{
+						console.log(evt.candidate);
+						sendcandidate({type:"candidate",sdpMLineIndex:evt.candidate.sdpMLineIndex,sdpMid:evt.candidate.sdpMid,candidate:evt.candidate.candidate})
+					}
+				};
+				console.log('添加本地视频流···');
+				peer.addStream(localstream);//为了让对方能接收从本地摄像头采集的视频数据流
+				peer.addEventListener('addstream',onremotestreamadded,false);//接收到发送过来的视频流时触发此事件
+				peer.addEventListener('removestream',onremotestreamremoved,false);//当远程视频流不可用时触发此事件
+			//当接到远程视频流时，使用本地video进行显示
+			function onremotestreamadded(event)
+			{
+				console.log("添加远程视频流");
+				remotevideo.src=window.URL.createObjectURL(event.stream);
+			}
+			//当远程结束通信时，取消本地video显示
+			function onremotestreamremoved(event)
+			{
+				console.log("移除远程视频流");
+				remotevideo.src="";
+			}
+			return peer;
+			}
+			
+			function sendoffer()
+			{
+				peerconnection=preparenewconnection();
+				//创建用于通信呼叫的Offer
+				peerconnection.createOffer(//成功调用函数，sessiondescription表示呼叫方的本地会话描述
+					function(sessiondescription)
+					{
+						peerconnection.setLocalDescription(sessiondescription);//保存WebRTC连接使用的本地会话描述
+						console.log('发送：SDP');
+						console.log(sessiondescription);
+						sendsdp(sessiondescription);
+					},function(err)
+					{
+						console.log("创建offer失败");
+					},mediaconstraints);
+			}
+			
+			function setoffer(evt)
+			{
+				if(peerconnection)
+				{
+					console.error('peerconnection已存在');
+				}
+				peerconnection=preparenewconnection();
+				peerconnection.setRemoteDescription(new RTCSessionDescription(evt));//保存接收到的远程会话描述
+			}
+			
+			function sendanswer(evt)
+			{
+				console.log('发送answer,创建远程会话描述···');
+				if(!peerconnection)
+				{
+					console.error('peerconnection不存在');
+					return;
+				}
+				//创建Answer(被呼叫方的SDP)
+				peerconnection.createAnswer(
+					function(sessiondescription)//sessiondescription代表被呼叫方的本地会话描述
+					{
+						peerconnection.setLocalDescription(sessiondescription);//保本地会话描述存
+						console.log("发送：SDP");
+						console.log(sessiondescription);
+						sendsdp(sessiondescription);
+					},function()
+					{
+						console.log("创建answer失败");
+					},mediaconstraints);
+				}
+			
+				function setanswer(evt)
+				{
+					if(!peerconnection)
+					{
+						console.error('peerconnection不存在');
+						return;
+					}
+					peerconnection.setRemoteDescription(new RTCSessionDescription(evt));
+				}
+				//开始建立连接
+				function connect()
+				{
+					if(!peerstarted&&localstream)
+					{
+						sendoffer();
+						peerstarted=true;
+					}else{
+						alert('请先捕获本地视频数据');
+					}
+				}
+			
+			function hangup()
+			{
+				console.log("挂断");
+				stop();
+			}
+			
+			function stop()
+			{
+				peerconnection.close();
+				peerconnection=null;
+				peerstarted=false;
+			}
+		</script>
+	</body>
+</html>

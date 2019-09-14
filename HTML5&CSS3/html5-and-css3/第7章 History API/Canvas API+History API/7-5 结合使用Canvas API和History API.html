@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Canvas+History API</title>
+		<style>
+			#canvas{
+				position:absolute;
+				top:0;
+				left:0;
+				width:100%;
+				height:100%;
+				margin:0;
+				display:block;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<canvas id="canvas" width="400" height="300"></canvas>
+		<image id="image" src="tyl3.jpg" style="display:none;" width="10px" height="10px"></image>
+	</body>
+	<script>
+		var image=document.getElementById('image');
+		var canvas=document.getElementById("canvas");
+		var context=canvas.getContext("2d");
+		var isdrawing=false;//表示用户是否按下鼠标左键，true表示按下，false表示未按下
+		var state=context.getImageData(0,0,canvas.width,canvas.height);
+		history.pushState(state,null);//为了连贯，先保存空白画布
+		canvas.addEventListener("pointerdown",function(e){e.preventManipulation()},false);//屏蔽用户按下左键触发的pointerdown事件
+		canvas.addEventListener("mousedown",startdrawing,false);//监听按下左键触发的mousedown事件
+		canvas.addEventListener("mousemove",draw,false);//监听移动鼠标触发的事件
+		canvas.addEventListener("mouseup",stopdrawing,false);//监听松开左键触发的事件
+		window.addEventListener("popstate",loadstate,false);//监听前进或后退按钮触发的事件
+		function startdrawing()
+		{
+			isdrawing=true;//表示开始绘画
+		}
+		
+		function draw(event)
+		{
+			if(isdrawing)//如果是绘画状态
+			{
+				var sx=canvas.width/canvas.offsetWidth;
+				//求出画布自身宽高在画布元素整体宽高的占比
+				var sy=canvas.height/canvas.offsetHeight;
+				var x=sx*event.clientX-image.naturalWidth/2;     
+				//后面除以2为了将鼠标定位于图片中心开始绘制
+				var y=sy*event.clientY-image.naturalHeight/2;
+				context.drawImage(image,x,y);
+			}
+		}
+		
+		function stopdrawing()
+		{
+			isdrawing=false;//表示推出绘画状态
+			var state=context.getImageData(0,0,canvas.width,canvas.height);//设置为一个CanvasPixelArray对象，保存canvas元素中所有像素构成的数组
+			history.pushState(state,null);//保存当前绘画至浏览器历史记录里
+		}
+		
+		function loadstate(e)
+		{
+			context.clearRect(0,0,canvas.width,canvas.height);
+			if(e.state)
+			{
+				context.putImageData(e.state,0,0);//将每一个历史记录保存的图像绘制在画布上
+			}
+		}
+	</script>
+</html>

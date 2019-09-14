@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>filesystem前缀的URL使用示例</title>
+	</head>
+	<script>
+		window.requestFileSystem=window.requestFileSystem||window.webkitRequestFileSystem;
+		var filesystemurl;
+		function createimg()
+		{
+			window.webkitRequestFileSystem(PERSISTENT,1024,
+			function(fs)
+			{
+				var name=document.getElementById("name").value;
+				fs.root.getFile(
+					name,{create:false},
+					function(fileentry)
+					{
+						var img=document.createElement('img');
+						filesystemurl=fileentry.toURL();
+						img.src=filesystemurl;//可以将src设为filesystem:http://+应用程序域名+temporary或persistent+文件名
+						document.getElementById("form").appendChild(img);
+						document.getElementById("btngetfile").disabled=false;
+					},errorhandler);
+			},errorhandler);
+		}
+		
+		function getfile()
+		{
+			window.resolveLocalFileSystemURL=window.resolveLocalFileSystemURL||window.webkitResolveLocalFileSystemURL;
+			window.resolveLocalFileSystemURL(filesystemurl,//可以根据带有filesystem:前缀的URL获取文件对象
+			function(fileentry)
+			{
+				document.getElementById("result").innerHTML="文件名："+fileentry.name;
+			},errorhandler);
+		}
+		
+		function errorhandler()
+		{
+			alert('失败');
+		}
+	</script>
+	<body>
+		<h1>filesystem前缀的URL使用实例</h1>
+		<form id="form">
+			<input type="text" id="name">
+			<input type="button" onclick="createimg()" value="创建图片"/>
+			<input type="button" id="btngetfile" value="显示文件名" onclick="getfile()" disabled> <br>
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

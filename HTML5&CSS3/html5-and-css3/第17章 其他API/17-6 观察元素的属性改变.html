@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>观察元素的属性改变</title>
+	</head>
+	<body>
+		<a id="a1" href="#">1</a>
+		<a id="a2" href="#">2</a>
+		<input type="button" value="修改a元素" onclick="changea()">
+		<script>
+			function onchange(mutationrecords,mutationobserver)
+			{
+				for(var i=0;i<mutationrecords.length;i++)
+				console.log("修改前的"+mutationrecords[i].attributeName+"属性为"+mutationrecords[i].oldValue);
+			}
+			var a1=document.getElementById("a1");
+			var a2=document.getElementById("a2");
+			var attr=['href'];
+			var mo=new window.MutationObserver(onchange);
+			options={attributes:true,attributeFilter:attr,attributeOldValue:true};//attributeFilter限定观察的属性，attributeOldValue记录修改前的属性
+			mo.observe(a1,options);
+			mo.observe(a2,options);
+			function changea()
+			{
+				a1.setAttribute("href","http://www.baidu.com");
+				a2.setAttribute("href","http://www.baidu.com");
+			}
+		</script>
+	</body>
+</html>

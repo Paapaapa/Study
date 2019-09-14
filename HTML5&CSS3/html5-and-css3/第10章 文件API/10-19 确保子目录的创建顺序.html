@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>确保子目录的创建顺序</title>
+	</head>
+	<script>
+		var path='test/test1/test2';
+		function createdirectory()
+		{
+			window.webkitRequestFileSystem(
+				PERSISTENT,
+				1024,
+				function(fs)
+				{
+					createdir(fs.root,path.split('/'));
+				},errorhandler);
+		}
+		
+		function createdir(rootdirentry,folders)
+		{//将"/foo/.//bar"之类目录名中的'./'或'/'文字剔除
+			if(folders[0]=='.'||folders[0]=='')
+			{
+				folders=folders.slice(1);//返回第二个和第三个
+			}
+			rootdirentry.getDirectory(folders[0],{create:true},
+			function(direntry)
+			{
+				if(folders.length)
+				{
+					document.getElementById("result").innerHTML+=direntry.name+"目录已创建<br>";
+					createdir(direntry,folders.slice(1));//调用递归函数创建该目录下的子目录
+				}
+			},errorhandler);
+		}
+		
+		function errorhandler()
+		{
+			alert('失败');
+		}
+	</script>
+	<body>
+		<h1>确保子目录的创建顺序</h1>
+		<form>
+			<input type="button" value="创建目录" onclick="createdirectory()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

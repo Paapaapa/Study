@@ -1,0 +1,20 @@
+﻿CACHE MANIFEST
+#文件的开头必须要书写CACHE MANIFEST
+#这个manifest文件的版本号
+#version 7
+#一行写一个文件
+CACHE：
+#指定需要被缓存在本地的资源文件,不需要把被指定本地缓存的资源文件的页面写在这里面,因为浏览器会自动缓存拥有manifest文件的页面
+other.html
+hello.js
+images/myphoto.jpg
+NETWORK：
+#显示指定不进行本地缓存的资源文件，只有当客户端与服务器端建立连接时才能访问
+http://Lulingniu/NotOffline
+NotOffline.asp
+*#表示通配符，没有在本mainfest文件指定的资源文件都不进行本地缓存
+FALLBACK：#每行指定两个资源文件，第一个资源文件为能在线访问时使用的资源文件，第二个为不能在线访问时使用的备份资源文件
+online.js locale.js
+CACHE：
+newhello.html
+newhello.js  

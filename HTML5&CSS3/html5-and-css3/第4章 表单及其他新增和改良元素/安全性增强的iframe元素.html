@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>安全性增强的iframe元素</title>
+	</head>
+	
+	<body>
+		<iframe sandbox="allow-same-origin allow-scripts" src="xyz.html"></iframe>
+		<iframe sandbox="allow-forms" src="4-15 简单表单示例.html"></iframe>
+		<iframe sandbox="allow-top-navigation" src="4-27 a元素的download属性示例.html"></iframe>
+	</body>
+</html>
+
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-22
+	描述：
+值	             描述
+""	应用以下所有的限制。
+allow-same-origin	允许 iframe 内容被视为与包含文档有相同的来源。
+allow-top-navigation	允许 iframe 内容从包含文档导航（加载）内容。
+allow-forms	允许表单提交。
+allow-scripts	允许脚本执行。
+-->

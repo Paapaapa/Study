@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>3D旋转变形</title>
+	</head>
+	<style>
+		div{
+			width:300px;
+			height:100px;
+			background-color:yellow;
+			text-align:center;
+		}
+	</style>
+	<body>
+		<div id="div">abcdefg</div>
+		<input type="button" value="X" onclick="rotatex()">
+		<input type="button" value="Y" onclick="rotatey()">
+		<input type="button" value="Z" onclick="rotatez()">
+		<script>
+			var n,rotint,rotxint,rotyint,rotzint;
+			var div=document.getElementById("div");
+			
+			function rotatex()
+			{
+				n=0;
+				clearInterval(rotxint);
+				rotxint=setInterval("startxrotate()",10);
+			}
+			
+			function startxrotate()
+			{
+				n=n+1;
+				div.style.transform="rotateX("+n+"deg)";
+				if(n==180)
+				{
+					clearInterval(rotxint);
+					n=0;
+				}
+			}
+			
+			function rotatey()
+			{
+				n=0;
+				clearInterval(rotyint);
+				rotyint=setInterval("startyrotate()",10);
+			}
+			
+			function startyrotate()
+			{
+				n=n+1;
+				div.style.transform="rotateY("+n+"deg)";
+				if(n==180)
+				{
+					clearInterval(rotyint);
+					n=0;
+				}
+			}
+			
+			function rotatez()
+			{
+				n=0;
+				clearInterval(rotzint);
+				rotzint=setInterval("startzrotate()",10);
+			}
+			
+			function startzrotate()
+			{
+				n=n+1;
+				div.style.transform="rotateZ("+n+"deg)";
+				if(n==180)
+				{
+					clearInterval(rotzint);
+					n=0;
+				}
+			}
+		</script>
+	</body>
+</html>

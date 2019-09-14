@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>设定每栏宽度</title>
+	</head>
+	<style>
+		div#container{
+			width:42em;
+		}
+		div#div1{
+			column-count:2;
+			-moz-column-count: 2;
+			-webkit-column-count:2 ;
+			column-width: 20em;
+			-moz-column-width: 20em;
+			-webkit-column-width:20em;
+			column-gap:3em;
+			-moz-column-gap: 3em;
+			-webkit-column-gap:3em;
+			column-rule: 1px solid red;
+			-moz-column-rule: 1px solid red;
+			-webkit-column-rule:1px solid red;
+		}
+		div#div3{
+			width:100%;
+			background-color: yellow;
+			height:200px;
+		}
+	</style>
+	<body>
+		<div id="div1">
+			<p>fffffffffffggggggggggggggggggggfffffffffffffffffff
+			kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
+			hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+			rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr</p>
+		<p>eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+		eeeeeeeeeeeeeeeeeeeeeeeeeeeegggggggggggggggg
+		aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab
+		bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbg
+		ggggggggggggggggggggggggggggg</p>
+		</div>
+		<div id="div3">fffffffffffffffffffffffffffffffffff</div>
+	</body>
+</html>

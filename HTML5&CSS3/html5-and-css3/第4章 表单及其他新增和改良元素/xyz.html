@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<script>
+		if(window.XMLHttpRequest)
+		{
+			xhttp=new XMLHttpRequest();
+		}
+		xhttp.open("GET","books.xml",false);
+		xhttp.send();
+		xmlDoc=xhttp.responseXML;
+		x=xmlDoc.getElementsByTagName('book_name');
+		for(i=0;i<x.length;i++)
+		{
+			document.write(x[i].childNodes[0].nodeValue);
+			document.write("<br />");
+		}
+	</script>
+	<body>
+	</body>
+</html>

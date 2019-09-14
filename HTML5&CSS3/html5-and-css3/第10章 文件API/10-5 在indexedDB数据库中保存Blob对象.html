@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>indexedDB数据库保存Blob对象</title>
+	</head>
+	<script>
+		window.indexedDB=window.indexedDB||window.webkitIndexedDB||window.mozIndexedDB||window.msIndexedDB;
+		window.IDBTransaction=window.IDBTransaction||window.webkitIDBTransaction||window.msIDBTransaction;
+		window.IDBKeyRange=window.IDBKeyRange||window.webkitIDBKeyRange||window.msIDBKeyRange;
+		window.IDBCursor=window.IDBCursor||window.webkitIDBCursor||window.msIDBCursor;
+		var dbname='blobtest';//数据库名
+		var dbversion=20150601;//版本号
+		var idb; 
+		var dbconnect=indexedDB.open(dbname,dbversion);
+		dbconnect.onsuccess=function(e)
+		{
+			idb=e.target.result;
+		};
+		dbconnect.onerror=function()
+		{
+			alert('连接失败');
+		};
+		dbconnect.onupgradeneeded=function(e)
+		{
+			idb=e.target.result;
+			idb.createObjectStore('files');
+		};
+		
+		function savefile()
+		{
+			var files;
+			files=document.getElementById("file").files[0];
+			var tx=idb.transaction(['files'],"readwrite");
+			var store=tx.objectStore('files');
+			var req=store.put(files,'blob');
+			req.onsuccess=function(e)
+			{
+				alert('保存成功');
+			};
+			req.onerror=function(e)
+			{
+				alert('保存失败');
+			};			
+		}
+		</script>
+	<body>
+		选择文件：<input type="file" id="file">
+		<input type="button" value="保存文件" onclick="savefile()">
+	</body>
+</html>

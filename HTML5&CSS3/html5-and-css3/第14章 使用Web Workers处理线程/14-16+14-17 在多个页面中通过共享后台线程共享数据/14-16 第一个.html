@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>第一个</title>
+	</head>
+	<script>
+		var worker;
+		function onload()
+		{
+			worker =new SharedWorker('14-17 test.js');
+			var div=document.getElementById('div');
+			worker.port.addEventListener('message',function(e)
+			{
+				document.getElementById('text').value=e.data;
+			},false);
+			worker.port.start();
+		}
+		
+		function senddata()
+		{
+			worker.port.postMessage(document.getElementById("text").value);
+		}
+		
+		function getdata()
+		{
+			worker.port.postMessage('get');
+		}
+	</script>
+	<body onload="onload()">
+		<input type="text" id="text" />
+		<button onclick="senddata()">提交数据</button>
+		<button onclick="getdata()">获取数据</button>
+	</body>
+</html>

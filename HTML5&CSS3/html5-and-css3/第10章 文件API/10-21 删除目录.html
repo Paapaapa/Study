@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>删除目录</title>
+	</head>
+	<script>
+		function deletedirectory()
+		{
+			window.webkitRequestFileSystem(
+				PERSISTENT,
+				1024,
+				function(fs)
+				{
+					var directoryname=document.getElementById("directoryname").value;
+					fs.root.getDirectory(
+						directoryname,
+						{create:false},
+						function(direntry)
+						{
+							/*
+							 *当想要一并删除目录和目录下包含的子目录或文件时，可以用removeRecursively方法 
+							 *
+							 */							
+							direntry.remove(//删除目录，如果此目录还包含子目录和文件，会报错
+								function()
+								{
+									document.getElementById("result").innerHTML=direntry.name+'目录被删除';
+								},errorhandler);
+						},errorhandler);
+				},errorhandler);
+		}
+		
+		function errorhandler()
+		{
+			alert('失败');
+		}
+	</script>
+	<body>
+		<h1>删除目录</h1>
+		<form>
+			目录名：<input type='text' id="directoryname" value="test">
+			<input type="button" value="删除目录" onclick="deletedirectory()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

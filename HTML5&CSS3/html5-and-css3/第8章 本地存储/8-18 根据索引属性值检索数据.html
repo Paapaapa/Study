@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>根据索引属性值检索一批数据</title>
+	</head>
+	<script>
+	window.indexedDB=window.indexedDB||window.webkitIndexedDB||window.mozIndexedDB||window.msIndexedDB;
+		window.IDBTransaction=window.IDBTransaction||window.webkitIDBTransaction||window.msIDBTransaction;
+		window.IDBKeyRange=window.IDBKeyRange||window.webkitIDBKeyRange||window.msIDBKeyRange;
+		window.IDBCursor=window.IDBCursor||window.webkitIDBCursor||window.msIDBCursor;
+		var dbname='indexeddbtest';//数据库名
+		var dbversion=20150607;//版本号
+		var idb;
+		
+		function window_onload()
+		{
+			document.getElementById("btnsavedata").disabled=true;
+			document.getElementById("btnsearchdata").disabled=true;
+		}
+		
+		function connectdatabase()
+		{
+			var dbconnect=indexedDB.open(dbname,dbversion);
+			dbconnect.onsuccess=function(e)
+			{
+				idb=e.target.result;//是一个IDBDatabase对象，代表连接成功的数据库对象
+				//开启事务transaction(由仓库名组成的字符串数组(限定事务只针对这些仓库进行，若不想限定，可写为idb.objectStoreNames表示所有仓库)，模式)模式:readonly,readwrite
+				alert('连接成功');
+				document.getElementById("btnsavedata").disabled=false;
+			};
+			
+			dbconnect.onerror=function()
+			{
+				alert('连接失败！');
+			};
+		}
+		
+		function savedata()
+		{
+				var tx=idb.transaction(['newusers'],"readwrite");
+				tx.oncomplete=function()
+				{
+					alert('保存成功');
+					document.getElementById("btnsearchdata").disabled=false;
+				}
+				tx.onabort=function()
+				{
+					alert('保存失败');
+				}
+				var store=tx.objectStore('newusers');//获取该事务对象作用范围内的某个仓库
+				var value={
+					userid:2,
+					username:'用1',
+					address:'22'
+				};
+				store.put(value);
+				value={
+					userid:3,
+					username:'用2',
+					address:'233'
+				};
+				store.put(value);
+				value={
+					userid:4,
+					username:'用3',
+					address:'444'
+				};
+				store.put(value);
+			}
+			
+			function searchdata()
+			{
+				var tx=idb.transaction(['newusers'],"readonly");
+				var store=tx.objectStore('newusers');
+				var idx=store.index('usernameindex');//获取索引
+				var range=IDBKeyRange.bound('用1','用3');
+				var direction="next";
+				var req=idx.openCursor(range,direction);//创建并打开游标		
+				/*
+				 * openCursor(IDBKeyRange对象，游标读取方向)
+				 * IDBKeyRange对象创建方法：
+				 * 一、使用bound方法
+				 * IDBKeyRange.bound(lower,upper,loweropen,upperopen)返回一个由一批数据的某个索引的索引属性值组成的IDBKeyRange集合对象
+				 * 当游标打开时该集合中包括的所有所有索引属性值（默认范围是大于等于最小索引属性值到小于等于最大索引属性值）指向的数据都会被读到游标中。
+				 * 第一个参数为最小索引属性值，第二个参数为最大索引属性值，
+				 * 第三个参数为可选参数，值为false时表示集合对象中包含最小索引属性值，true表示不包含
+				 * 第四个参数为可选参数，值为false时表示集合对象中包含最大索引属性值，true表示不包含
+				 * 二、使用only方法
+				 * IDBKeyRange.only(value),value表示索引属性值
+				 * 三、使用lowerBound方法
+				 * IDBKeyRange.lowerBound(lower,lowerOpen)默认取大于等于指定索引属性值的索引属性值
+				 * 四、使用upperBound方法
+				 * IDBKeyRange.upperBound(upper,upperOpen)默认取小于等于指定索引属性值的索引属性值
+				 游标读取方向：
+				 next:游标中数据按索引属性值升序排列，索引属性值相等时均被读取
+				 nextunique:游标中数据按索引属性值升序排列，索引属性值相等时只取第一条数据
+				prev:游标中数据按索引属性值降序排列，索引属性值相等时均被读取
+				prevunique:游标中数据按索引属性值降序排列，索引属性值相等时只取第一条数据
+				 */
+				req.onsuccess=function(){
+					var cursor=this.result;
+					if(cursor)
+					{
+					alert('检索到一条数据，用户名为'+cursor.value.username);
+					cursor.continue();//继续检索
+					//可以使用update方法更新数据（将使用的事务改为读写事务）
+					/*
+					 * cursor.update({
+					 * 	userid:cursor.key;//key里存放该条记录的主键值
+					 * username:'test',
+					 * address:'test'
+					 * });
+					 * 
+					 * 删除数据
+					 * cursor.delete();
+					 */
+					}
+					else
+					alert("检索结束");
+				};
+				req.onerror=function(){
+					alert('检索数据失败！');
+				};
+			}
+</script>
+	<body onload="window_onload()">
+		<input id="btnconnectdatabase" type="button" value="连接数据库" onclick="connectdatabase()">
+		<input id="btnsavedata" type="button" value="保存数据" onclick="savedata()">
+		<input id="btnsearchdata" type="button" value="检索数据" onclick="searchdata()">
+	</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>通道通信-子网页2</title>
+	</head>
+	<script>
+		function windowonload()
+		{
+			//定义本页面中端口接收到消息时的事件处理函数中的内容
+			var msghandler=function(msgevent)
+			{
+				msgevent.ports[0].postMessage('子页面2已接收到消息'+msgevent.data);//将接受到的消息发回给子网页1发来的端口
+			};
+			//定义本页面中端口接收到消息时的事件处理函数
+			window.addEventListener('message',msghandler,false);
+		}
+	</script>
+	<body onload="windowonload()">
+	</body>
+</html>

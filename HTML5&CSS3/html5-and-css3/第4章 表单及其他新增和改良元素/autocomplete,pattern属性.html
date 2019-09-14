@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+<title>autocomplete,pattern属性</title>
+	</head>
+	<body>
+		<form>
+			<input type="text" name="greeting" list="greetings" autocomplete="on">
+
+<datalist id="greetings" style="display: none;">
+    <option value="Good Morning">Good Morning</option>
+    <option value="Hello">Hello</option>
+    <option value="Good Afternoon">Good Afternoon</option>
+</datalist>
+
+<input pattern="[0-9][a-z]{3}" name=part>
+                                         <!--
+                                         	作者：304752464@qq.com
+                                         	时间：2018-01-21
+                                         	描述：规定输入一个数字和三个小写字母
+                                         -->
+<input type=submit />
+		</form>
+	</body>
+</html>
+
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-21
+	描述：
+	H5中，autocomplete属性，有on,off和不指定三个值。
+	为on时，显示指定候补输入的数据列表
+	
+	pattern属性，对input元素使用时，将属性值设为某个格式的正则表达式，提交时会进行检查，
+	不符合格式不允许提交，并显示提示文字。
+-->

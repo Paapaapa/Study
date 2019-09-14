@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset=UTF-8 >
+<title>checkValidity示例</title>
+<script language="javascript">
+function check()
+{
+    var email = document.getElementById("email");
+    if(email.value=="")
+    {
+        alert("请输入Email地址");    
+        return false;
+    }    
+    else if(!email.checkValidity())
+        alert("请输入正确的Email地址"); 
+    else
+        alert("您输入的Email地址有效");
+}
+</script>
+</head>
+<body>
+<form id=testform onsubmit="return check();">
+<label for=email>Email</label>
+<input name=email id=email type=email /><br/> 
+<input type=submit>
+</form>
+</body>
+</html>
+
+<!--
+	checkValidity方法可以显式的对表单内所有元素或单个元素内容进行有效验证
+-->
+

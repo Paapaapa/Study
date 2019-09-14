@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=gb2312" />
+<title>nth-of-type选择器与nth-last-of-type选择器使用示例</title>
+<style type="text/css">
+h2:nth-child(odd){
+    background-color: yellow;
+}
+h2:nth-child(even){
+    background-color: skyblue;
+}
+</style>
+</head>
+<body>
+<div>
+<h2>文章标题A</h2>
+<p>文章正文。</p>
+<h2>文章标题B</h2>
+<p>文章正文。</p>
+<h2>文章标题C</h2>
+<p>文章正文。</p>
+<h2>文章标题D</h2>
+<p>文章正文。</p>
+</div>
+</body>
+</html>
+<!--
+	作者：304752464@qq.com
+	时间：2018-02-13
+	描述：
+	所有标题背景变成了黄色，原因在于：
+	nth-child选择器在计算子元素是
+	第奇数个元素还是第偶数个元素时，
+	是连同父元素中的所有子元素一起计算的
+	
+	h2:nth-child(odd)表示当div元素中的第奇数个子元素如果是h2子元素时使用
+-->

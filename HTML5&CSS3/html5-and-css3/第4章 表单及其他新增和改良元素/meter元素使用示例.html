@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>meter元素使用示例</title>
+	</head>
+	<body>
+		<p>磁盘使用量：<meter value="40" min=0 max=160>40/160</meter>GB</p>
+		<p>你的得分是：
+		<meter value=91 min=0 max=100 low=40 hign=90 optimum=100>A+</meter>
+		</p>
+	</body>
+</html>
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-21
+	描述：
+	meter元素表示规定范围内的数量值
+	value:标示出来的实际值
+	min:最小值，不能小于0
+	max:最大值，若小于min的值，把min的值作为最大值
+	low:范围的下限值，若小于min的值，就把min的值作为low的值
+	high:范围的上限值，若小于low的值，就把low的值作为high的值；若大于max的值，就把max的值作为high的值
+	optimum:最佳值，必须在min，max之间，可以大于high的值
+-->

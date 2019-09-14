@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>required+optional</title>
+		<style>
+			input[type="text"]:required{
+				border-color:red;
+				border-width:3px;
+			}
+			input[type="text"]:optional{
+				border-color:black;
+				border-width:1px;
+			}
+		</style>
+	</head>
+	<body>
+		<form>
+			姓名：<input type="text" required placeholder="必须输入姓名"><br>
+			住址：<input type="text">
+		</form>
+	</body>
+</html>

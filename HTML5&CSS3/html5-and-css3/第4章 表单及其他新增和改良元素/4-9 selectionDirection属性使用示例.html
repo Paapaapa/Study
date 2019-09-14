@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>selectionDirection属性使用示例</title>
+	</head>
+	<script>
+		function alertselect()
+		{
+			var control=document.forms[0]['text'];
+			var direction=control.selectionDirection;
+			alert(direction);
+		}
+	</script>
+	<body>
+		<form>
+			<input type=text name=text>
+			<input type=button value=dianji onclick=alertselect()>
+		</form>
+	</body>
+</html>
+
+
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-21
+	描述：
+	H5中，针对input,textarea元素增加了selectionDirection属性，
+	当用户在正向选取元素里的文字时，该属性值为forward,反向则为backward,
+	没有选取文字时，值为forward
+-->

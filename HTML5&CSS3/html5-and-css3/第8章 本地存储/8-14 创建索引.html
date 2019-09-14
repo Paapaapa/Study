@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>创建索引</title>
+	</head>
+	<script>
+		window.indexedDB=window.indexedDB||window.webkitIndexedDB||window.mozIndexedDB||window.msIndexedDB;
+		window.IDBTransaction=window.IDBTransaction||window.webkitIDBTransaction||window.msIDBTransaction;
+		window.IDBKeyRange=window.IDBKeyRange||window.webkitIDBKeyRange||window.msIDBKeyRange;
+		window.IDBCursor=window.IDBCursor||window.webkitIDBCursor||window.msIDBCursor;
+		function createindex()
+		{
+			var dbname='indexeddbtest';//数据库名
+			var dbversion=20150605;//版本号
+			var idb;
+			var dbconnect=indexedDB.open(dbname,dbversion);
+			dbconnect.onsuccess=function(e)
+			{
+				idb=e.target.result;//是一个IDBDatabase对象，代表连接成功的数据库对象
+				alert('连接成功!');
+			};
+			
+			dbconnect.onerror=function()
+			{
+				alert('连接失败！');
+			};
+			
+			dbconnect.onupgradeneeded=function(e)//onupgradeneeded事件在当连接数据库时发现指定版本号大于当前版本号时触发，被触发时版本更新事务开启，数据库版本号自动更新完毕
+			{//数据库版本更新
+				idb=e.target.result;
+				var tx=e.target.transaction;//事务对象
+			    var name='newusers';//定义对象仓库名
+			    var options={//定义对象
+			    	keyPath:'userid',//指定主键，对象仓库中只能有一个主键，但主键值可以重复，除非将主键指定为唯一主键
+			    	autoIncrement:false//指定主键是否自增
+			    };
+			    var store=idb.createObjectStore(name,options);//创建对象仓库createObjectStore(对象仓库名，对象)
+			    alert('对象仓库创建成功！');
+			    var name='usernameindex';//定义索引名
+			    var keypath='username';//创建索引的属性
+			    var options={
+			    	unique:false,//表示索引属性值是否能相同
+			    	multiEntry:false//true表示当数据记录的索引属性值是数组时，可以将数组中的每一个元素添加进索引中;false表示只能将该数组整体添加进索引中
+			    };
+			    var idx=store.createIndex(name,keypath,options);//创建索引createIndex(索引名，创建索引的属性值，对象)
+			    alert('索引创建成功！');
+			};
+		}
+	</script>
+	<body>
+		<input type="button" value="创建索引" onclick="createindex()">
+	</body>
+</html>
+
+<!--
+	在indexedDB数据库中，只能针对被设为索引的属性值进行检索，不能针对没有被设为索引的属性值进行检索
+-->

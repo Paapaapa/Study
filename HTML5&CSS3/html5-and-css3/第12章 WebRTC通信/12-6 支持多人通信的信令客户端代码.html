@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>webrrtc会议室</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<script src="http://www.html5online/com.cn:8080/socket.io/socket.io.js"></script>
+	</head>
+	<body>
+		<button type="button" onclick="startvideo()">开始捕获视频信息</button>
+		<button type="button" onclick="stopvideo()">停止捕获视频信息</button>
+		<button type="button" onclick="connect()">建立连接</button>
+		<button type="button" onclick="hangup()">挂断</button>
+		<br>
+		<div style="position:relative;">
+			<video id="local-video" autoplay="" style="width:240px;height:180px;border:1px solid black;"></video>
+			<video id="remote-video-0" autoplay="" style="width:240px;height:180px;border:1px solid black;"></video>
+			<video id="remote-video-1" autoplay="" style="width:240px;height:180px;border:1px solid black;"></video>
+			<video id="remote-video-2" autoplay="" style="width:240px;height:180px;border:1px solid black;"></video>
+		</div>
+		
+		
+		<script>
+			navigator.getUserMedia=navigator.getUserMedia||navigator.webkitGetUserMedia||window.navigator.mozGetUserMedia;
+			window.URL=window.URL||window.webkitURL;
+			if(navigator.mozGetUserMedia)
+			{
+				RTCPeerConnection=mozRTCPeerConnection;
+				RTCSessionDescription=mozRTCSessionDescription;
+				RTCIceCandidate=mozRTCIceCandidate;
+			}
+			else if(navigator.webkitGetUserMedia)
+			{
+				RTCPeerConnection=webkitRTCPeerConnection;
+			}else
+			{
+				alert('不支持');
+			}
+			
+			var localvideo=document.getElementById('local-video');
+			var localstream=null;
+			var mediaconstraints={'mandatory':{'OfferToReceiveAudio':true,'OfferToReceiveVideo':true}};//表示接受对方传来的视频，不接收音频
+		
+             //多人使用video元素
+             var videoelementsinuse=[];
+             var videoelementsstandby=[];
+             pushvideostandby(getvideoforremote(0));
+             pushvideostandby(getvideoforremote(1));
+             pushvideostandby(getvideoforremote(2));
+			
+			function getvideoforremote(index)
+			{
+				var elementid='remote-video-'+index;
+				var element=document.getElementById(elementid);
+				return element;
+			}
+			
+			function getaudioforremote(index)
+			{
+				var elementid='remote-audio-'+index;
+				var element=document.getElementById(elementid);
+				return element;
+			}
+			
+			//video元素
+			function pushvideostandby(element)
+			{
+				videoelementsstandby[element.id]=element;
+			}
+			
+			function popvideostandby()
+			{
+				var element=null;
+				for(var id in videoelementsstandby)
+				{
+					element=videoelementsstandby[id];
+					delete videoelementsstandby[id];
+					return element;
+				}
+				return null;
+			}
+			
+			function pushvideoinuse(id,element)
+			{
+				videoelementsinuse[id]=element;
+			}
+			
+			function popvideoinuse(id)
+			{
+				element=videoelementsinuse[id];
+				delete videoelementsinuse[id];
+				return element;
+			}
+			
+			function attachvideo(id,stream)
+			{
+				console.log('尝试添加video.id='+id);
+				var videoelement=popvideostandby();
+				if(videoelement)
+				{
+					videoelement.src=window.URL.createObjectURL(stream);
+					console.log("videoelement.src="+videoelement.src);
+					pushvideoinuse(id,videoelement);
+					videoelement.style.display='block';
+				}else{
+					console.error('没有可用的video元素');
+				}
+			}
+			
+			function detachvideo(id)
+			{
+				console.log('尝试移除video.id='+id);
+				var videoelement=popvideoinuse(id);
+				if(videoelement)
+				{
+					videoelement.pause();
+					videoelement.src="";
+					console.log("videoelement.src="+videoelement.src);
+					pushvideostandby(videoelement);
+				}else{
+					console.warn('警告---没有id为'+id+'的video元素');
+				}
+			}
+			
+			function detachallvideo()
+			{
+				var element=null;
+				for(var id in videoelementsinuse)
+				{
+					detachvideo(id);
+				}
+			}
+			
+			function getfirstvideoinuse()
+			{
+				var element=null;
+				for(var id in videoelementsinuse)
+				{
+					element=videoelementsinuse[id];
+					return element;
+				}
+				return null;
+			}
+			
+			function getvideocountinuse()
+			{
+				var count=0;
+				for(var id in videoelementsinuse)
+				{
+					count++;
+				}
+				return count;
+			}
+			
+			function islocalstreamstarted()
+			{
+				if(localstream)
+				{
+					return true;
+				}else{
+					return false;
+				}
+			}
+			
+			//多个连接
+			var maxconnectcount=3;
+			var connections=[];
+			function connection()//connection类(保存通信状况及对方ID)
+			{
+				var self=this;
+				var id="";//对方的socket.id
+				var peerconnection=null;//RTCPeerConnection对象实例
+				var established=false;//是否已建立连接
+				var iceready=false;
+			}
+			
+			function getconnection(id)
+			{
+				var con=null;
+				con=connections[id];
+				return con;
+			}
+			
+			function addconnection(id,connection)
+			{
+				connections[id]=connection;
+			}
+			
+			function getconnectioncount()
+			{
+				var count=0;
+				for(var id in connections)
+				{
+					count++;
+				}
+				console.log('getconnectioncount'+count);
+				return count;
+			}
+			
+			function isconnectpossible()
+			{
+				if(getconnectioncount()<maxconnectcount)
+				{
+					return true;
+				}else{
+					return false;
+				}
+			}
+			
+			function getconnectindex(idtolookup)
+			{
+				var index=0;
+				for(var id in connections)
+				{
+					if(id==idtolookup)
+					return index;
+					index++;
+				}
+				return -1;
+			}
+			
+			function deleteconnection(id)
+			{
+				delete connections[id];
+			}
+			
+			function stopallconnections()
+			{
+				for(var id in connections)
+				{
+					var conn=connections[id];
+					conn.peerconnection.close();
+					conn.peerconnection=null;
+					delete connections[id];
+				}
+			}
+			
+			function stopconnection(id)
+			{
+				var conn=connections[id];
+				if(conn)
+				{
+					console.log('停止并删除id为'+id+'的连接');
+					conn.peerconnection.close();
+					conn.peerconnection=null;
+					delete connections[id];
+				}else{
+					console.log('尝试停止连接，但是没有找到id为'+id+'的连接');
+				}
+			}
+			
+			function ispeerstarted()
+			{
+				if(getconnectioncount()>0)
+				{
+					return true;
+				}else{
+					return false;
+				}
+			}
+			
+			//socket
+			var socketready=false;
+			var port=8080;
+			var socket=io.connect('http://www.html5online.com.cn:'+port+'/');
+			socket.on('connect',onopened).on('message',onmessage);
+			
+			function onopened(evt)
+			{
+				console.log('已建立socket连接');
+				socketready=true;
+				var roomname=getroomname();
+				socket.emit('enter',roomname);
+				console.log('进入房间'+roomname);
+			}
+			
+			function onmessage(evt)
+			{
+				var id=evt.from;
+				var target=evt.sendto;
+				var conn=getconnection(id);
+				if(evt.type==='call')
+				{
+					if(!islocalstreamstarted())
+					{
+						return;
+					}
+					if(conn)
+					{
+						return;//已建立连接
+					}
+					if(isconnectpossible())//未超过最大连接数
+					{
+						socket.json.send({type:"response",sendto:id});//获取call函数发出的消息，同时向发送方返回response消息
+					}else{
+						console.warn('已达到最大连接数，本连接被忽略');
+					}
+					return;
+				}else if(evt.type==='response')
+				{
+					sendoffer(id);
+					return;
+				}else if(evt.type==='offer')
+				{
+					console.log("接收到offer,设置offer,发送answer```");
+					onoffer(evt);
+				}else if(evt.type==='answer'&&ispeerstarted())
+				{
+					console.log('接收到answer,设置answer SDP');
+					onanswer(evt);
+				}else if(evt.type==='candidate'&&ispeerstarted())
+				{
+					console.log('接收到ICE候选者···');
+					oncandidate(evt);
+				}else if(evt.type==='bye'&&ispeerstarted())
+				{
+					console.log("webrtc通信断开");
+					detachvideo(id);//强制移除视频
+					stopconnection(id);
+				}
+			}
+			
+			function getroomname()
+			{//通过某种方法返回会议室名，采用url字符串中的？后的部分
+				var url=document.location.href;
+				var args=url.split('?');
+				if(args.length>1)
+				{
+					var room=args[1];
+					if(room!="")
+					{
+						return room;
+					}
+				}
+				return "defaultroom";
+			}
+			
+			//握手
+			function onoffer(evt)
+			{
+				console.log("接受到offer···");
+				console.log(evt);
+				setoffer(evt);
+				sendanswer(evt);
+			}
+			
+			function onanswer(evt)
+			{
+				console.log("接受到answer···");
+				console.log(evt);
+				setanswer(evt);
+			}
+			
+			function oncandidate(evt)
+			{
+				var id=evt.from;
+				var conn=getconnection(id);
+				if(!conn)
+				{
+					console.error('peerconnection不存在');
+					return;
+				}
+				//检查ice是否准备好
+				if(!conn.iceReady)
+				{
+					console.warn("ice尚未准备好");
+					return;
+				}
+				var candidate=new RTCIceCandidate({sdpMLineIndex:evt.sdpMLineIndex,sdpMid:evt.sdpMid,candidate:evt.candidate});
+				console.log("接收到候选者···");
+				console.log(candidate);
+				conn.peerconnection.addIceCandidate(candidate);
+				console.log("peeridentity");
+				console.log(conn.peerconnection);
+			}
+			
+			function sendsdp(sdp)
+			{
+				var text=JSON.stringify(sdp);
+				console.log(text);
+				socket.json.send(sdp);
+			}
+			
+			function sendcandidate(candidate)
+			{
+				var text=JSON.stringify(candidate);
+				console.log(text);
+				socket.json.send(candidate);
+			}
+			//视频处理
+			function startvideo()
+			{
+				navigator.getUserMedia({video:true,audio:false},
+				function(stream)
+				{
+					localstream=stream;
+					localvideo.src=window.URL.createObjectURL(stream);
+					localvideo.play();
+					localvideo.volume=0;
+				},
+				function(error)
+				{
+					console.error('发生了一个错误：【错误代码：'+error.code+'】');
+					return;
+				});
+			}
+			
+			function stopvideo()
+			{
+				localvideo.src="";
+				localstream.stop();
+			}
+			//处理连接
+			function preparenewconnection(id)
+			{
+				var pcconfig={"iceServers":[{"url":"stun:stun.1.google.com:19302"}]};//用于配置WebRTC通信时使用的ICE服务器
+				var peer=null;
+				try{
+					peer=new webkitRTCPeerConnection(pcconfig);//创建代表WebRTC连接的RTCPeerConnection对象
+				}catch(e)
+				{
+					console.log("建立连接失败，错误："+e.message);
+				}
+				var conn=new connection();
+				conn.id=id;
+				conn.peerconnection=peer;
+				peer.id=id;
+				addconnection(id,conn);
+				peer.onicecandidate=function(evt)//当ICE发现网络候选者时会触发此事件
+				{
+					if(evt.candidate)
+					{
+						console.log(evt.candidate);
+						sendcandidate({type:"candidate",sendto:conn.id,sdpMLineIndex:evt.candidate.sdpMLineIndex,sdpMid:evt.candidate.sdpMid,candidate:evt.candidate.candidate})
+					}
+					else{
+						conn.established=true;
+					}
+				};
+				console.log('添加本地视频流···');
+				peer.addStream(localstream);//为了让对方能接收从本地摄像头采集的视频数据流
+				peer.addEventListener('addstream',onremotestreamadded,false);//接收到发送过来的视频流时触发此事件
+				peer.addEventListener('removestream',onremotestreamremoved,false);//当远程视频流不可用时触发此事件
+			    peer.addEventListener('iceconnectionstatechange',oniceconnectionstatechange,false);
+			//当接到远程视频流时，使用本地video进行显示
+			function onremotestreamadded(event)
+			{
+				console.log("添加远程视频流");
+				attachvideo(this.id,event.stream);
+			}
+			//当远程结束通信时，取消本地video显示
+			function onremotestreamremoved(event)
+			{
+				console.log("移除远程视频流");
+				detachvideo(this.id);
+			}
+			
+			function oniceconnectionstatechange(event)
+			{
+				if(peer.iceConnectionState=="disconnected")
+					detachvideo(this.id);
+			}
+			return conn;
+			}
+			
+			function sendoffer(id)
+			{
+				var conn=getconnection(id);
+				if(!conn) conn=preparenewconnection(id);
+				//创建用于通信呼叫的Offer
+				conn.peerconnection.createOffer(//成功调用函数，sessiondescription表示呼叫方的本地会话描述
+					function(sessiondescription)
+					{
+						conn.iceReady=true;
+						conn.peerconnection.setLocalDescription(sessiondconn.escription);//保存WebRTC连接使用的本地会话描述
+						sessiondescription.sendto=conn.id;//指定发送的对方
+						sendsdp(sessiondescription);
+					},function(err)
+					{
+						console.log("创建offer失败");
+					},mediaconstraints);
+					conn.iceReady=true;
+			}
+			
+			function setoffer(evt)
+			{
+				var id=evt.from;
+				var conn=getconnection(id);
+				if(!conn)
+				{
+					conn=preparenewconnection(id);
+					conn.peerconnection.setRemoteDescription(new RTCSessionDescription(evt));
+				}else{
+					console.error('peerconnection已存在');
+				}
+			}
+			
+			function sendanswer(evt)
+			{
+				console.log('发送answer,创建远程会话描述···');
+				var id=evt.from;
+				var conn=getconnection(id);
+				if(!conn)
+				{
+					console.error('peerconnection不存在');
+					return;
+				}
+				//创建Answer(被呼叫方的SDP)
+				conn.peerconnection.createAnswer(
+					function(sessiondescription)//sessiondescription代表被呼叫方的本地会话描述
+					{
+						conn.iceReady=true;
+						conn.peerconnection.setLocalDescription(sessiondescription);//保本地会话描述存
+						sessiondescription.sendto=id;//指定送信的对方
+						sendsdp(sessiondescription);
+					},function()
+					{
+						console.log("创建answer失败");
+					},mediaconstraints);
+					conn.iceReady=true;
+				}
+			
+				function setanswer(evt)
+				{
+				var id=evt.from;
+				var conn=getconnection(id);
+				if(!conn)
+				{
+					console.error('peerconnection不存在');
+						return;
+				}
+				conn.peerconnection.setRemoteDescription(new RTCSessionDescription(evt));
+				}
+				
+				//处理用户事件
+				function call()//对全员进行广播
+				{
+					if(!islocalstreamstarted())
+					{
+						alert("请先捕捉本地视频");
+						return;
+					}
+					if(!socketready)
+					{
+						alert("尚未与socket服务器建立连接");
+						return;
+					}
+					
+					//呼叫同房间内其他人
+					console.log("呼叫同房间内其他人");
+					socket.json.send({type:"call"});
+				}
+		
+			
+			function hangup()
+			{
+				console.log("挂断");
+				socket.json.send({type:"bye"});
+				detachallvideo();
+				stopallconnections();
+			}
+		</script>
+	</body>
+</html>

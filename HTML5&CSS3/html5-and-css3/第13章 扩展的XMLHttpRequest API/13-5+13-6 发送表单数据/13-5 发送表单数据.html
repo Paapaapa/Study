@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>发送表单数据</title>
+	</head>
+	<body>
+    <script>
+	function sendform()
+	{
+		var form=document.getElementById("form1");
+		var formdata=new FormData(form);//代表需要发送的表单数据
+		formdata.append('adddata','测试');//添加附加数据，append(键名,键值)
+		
+		var xhr=new XMLHttpRequest();
+		xhr.open('POST','13-6 test.php',true);
+
+		xhr.onload=function(e)
+		{
+			if(this.status==200)
+			{
+				document.getElementById("result").innerHTML=this.response;
+			}
+		};
+		xhr.send(formdata);
+	}
+    </script>
+	<body>
+		<form id="form1">
+			姓名：<input type="text" name="name"/>
+			年龄：<input type="text" name="age"/>
+			<input type="button" value="发送数据" onclick="sendform()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

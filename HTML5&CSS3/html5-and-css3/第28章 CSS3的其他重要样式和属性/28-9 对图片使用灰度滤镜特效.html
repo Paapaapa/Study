@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>对图片使用滤镜</title>
+	</head>
+	<style>
+		div{
+			display:flex;
+			flex-direction: row;
+		}
+		figure{
+			width:50%;
+			text-align:center;
+		}
+		figure:nth-child(2){
+			filter:drop-shadow(4px -4px 6px purple);
+			/*
+			 * 灰度滤镜：grayscale(100%)；怀旧滤镜：sepia(100%)；
+			 * 饱和度滤镜：saturate(250%)；hue-rotate(90deg)；
+			颜色翻转滤镜：invert(100%)；透明度滤镜：opacity(50%)；
+			对比度滤镜：contrast(200%)；模糊滤镜：blur(2px)；
+			阴影滤镜：drop-shadow(4px -4px 6px purple);；
+			* */
+			-webkit-filter:drop-shadow(4px -4px 6px purple);
+		}
+	</style>
+	<body>
+		<div>
+			<figure>
+				<img src="tyl.jpg" />
+				<figcaption>原始图片</figcaption>
+			</figure>
+			<figure>
+				<img src="tyl.jpg" />
+				<figcaption>使用滤镜</figcaption>
+			</figure>
+		</div>
+	</body>
+</html>

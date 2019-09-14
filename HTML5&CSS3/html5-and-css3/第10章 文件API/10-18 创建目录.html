@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>创建目录</title>
+	</head>
+	<script>
+		function createdirectory()
+		{
+			window.webkitRequestFileSystem(
+				PERSISTENT,
+				1024,
+				function(fs)
+				{
+					var directoryname=document.getElementById("directoryname").value;
+					fs.root.getDirectory(//获取目录或创建目录
+						directoryname,//目录名
+						{create:true},//创建目录必须为true，获取目录必须为false
+						function(dirEntry)//获取目录或创建目录成功时执行的函数
+						{//DirectoryEntry对象表示创建或获取成功的目录，拥有属性：isFile(是否是文件)、isDirectory(是否为目录)、name(目录名)、fullPath(目录的完整路径)、filesystem(目录所在的文件系统对象)
+							var text="目录完整路径："+dirEntry.fullPath+"<br>";
+							text+="文件名："+dirEntry.name+"<br>";
+							document.getElementById("result").innerHTML=text;
+						},errorhandler);
+				},errorhandler);
+		}
+		
+		function errorhandler(e)//失败时调用的函数
+		{
+			alert('失败');
+		}
+	</script>
+	<body>
+		<h1>创建目录</h1>
+		<form>
+			目录名：<input type="text" id="directoryname" value="test"><br>
+			<input type="button" value="创建目录" onclick="createdirectory()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

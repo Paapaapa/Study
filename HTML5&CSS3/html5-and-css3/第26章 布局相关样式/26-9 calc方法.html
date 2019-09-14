@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>calc方法</title>
+	</head>
+	<style>
+		#container{
+			width:500px;
+			background-color: pink;
+		}
+		#foo{
+			width:calc(50% - 100px);/*-号前后均 需空一格*/
+			background-color: green;
+		}
+	</style>
+	<script>
+		function change()
+		{
+			document.getElementById("container").style.width="1000px";
+		}
+	</script>
+	<body>
+		<div id="container">
+		<div id="foo">div</div>
+		</div><br>
+		<input type="button" value="修改div" onclick="change()" />
+	</body>
+</html>

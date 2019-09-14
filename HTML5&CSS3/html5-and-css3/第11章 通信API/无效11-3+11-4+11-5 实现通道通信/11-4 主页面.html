@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>通道通信</title>
+	</head>
+	<script>
+		function windowonload()
+		{
+			var iframes,msghandler;
+			iframes=window.frames;
+			//定义接收到消息时的事件处理函数中的内容
+			msghandler=function(msgevent)
+			{
+				if(msgevent.ports.length>0)//msgevent.ports.length指窗口对象的message事件的事件对象的ports属性值（代表接收到的所有端口）的length属性值，代表接收到端口的数量
+				{//将端口转发给第二个iframe元素中的页面
+					iframes[1].postMessage(msgevent.data,'http://localhost:8020/HTML5+CSS3权威指南-陆凌牛/第11章 通信API/11-3+11-4+11-5 实现通道通信/11-5 子网页2.html',msgevent.ports);
+				}
+			}
+			
+			//开始对第一个iframe元素中的页面监听
+			window.addEventListener('message',msghandler,false);
+		}
+	</script>
+	<body>
+		<h1>通道通信</h1>
+		<iframe style="" src="11-3 子网页1.html"></iframe>
+		<iframe style="" src="11-5 子网页2.html"></iframe>
+	</body>
+</html>

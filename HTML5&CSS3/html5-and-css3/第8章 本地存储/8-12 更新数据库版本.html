@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>更新数据库版本 </title>
+	</head>
+	<script>
+		window.indexedDB=window.indexedDB||window.webkitIndexedDB||window.mozIndexedDB||window.msIndexedDB;
+		window.IDBTransaction=window.IDBTransaction||window.webkitIDBTransaction||window.msIDBTransaction;
+		window.IDBKeyRange=window.IDBKeyRange||window.webkitIDBKeyRange||window.msIDBKeyRange;
+		window.IDBCursor=window.IDBCursor||window.webkitIDBCursor||window.msIDBCursor;
+		function updateversion()
+		{
+			var dbname='indexeddbtest';//数据库名
+			var dbversion=20150603;//版本号
+			var idb;
+			var dbconnect=indexedDB.open(dbname,dbversion);
+			dbconnect.onsuccess=function(e)
+			{
+				idb=e.target.result;//是一个IDBDatabase对象，代表连接成功的数据库对象
+				alert('连接成功!');
+			};
+			
+			dbconnect.onerror=function()
+			{
+				alert('连接失败！');
+			};
+			
+			dbconnect.onupgradeneeded=function(e)//onupgradeneeded事件在当连接数据库时发现指定版本号大于当前版本号时触发，被触发时版本更新事务开启，数据库版本号自动更新完毕
+			{//数据库版本更新
+				idb=e.target.result;
+				var tx=e.target.transaction;//事务对象
+				var oldversion=e.oldVersion;
+				var newversion=e.newVersion;
+				alert('数据库版本更新成功，旧版本号为：'+oldversion+',新版本号为：'+newversion);
+			};
+		}
+	</script>
+	<body>
+		<input type ="button" value="数据库版本更新" onclick="updateversion()">
+	</body>
+</html>
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-25
+	描述：
+	在使用indexedDB数据库时，所有对数据的操作都在一个事务内部执行。
+	事务分为：只读事务、读写事务、版本更新事务
+	创建对象仓库与索引只能在版本更新事务内进行，因为indexedDB API不允许数据库中的数据仓库在同一个版本中变化
+	所以，创建或删除数据仓库时，必须使用新的版本号更新数据库版本
+-->

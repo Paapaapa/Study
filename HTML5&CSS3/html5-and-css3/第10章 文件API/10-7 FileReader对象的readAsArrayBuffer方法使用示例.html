@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>FileReader对象的readAsArrayBuffer方法使用示例</title>
+	</head>
+	<script>
+		var result=document.getElementById("result");
+if (typeof FileReader == 'undefined' )
+{
+   result.innerHTML = "<p>抱歉，你的浏览器不支持 FileReader</p>";
+}
+
+function fileonchange()
+{
+	var files=document.getElementById("file").files[0];
+    if(!/image\/\w+/.test(files.type))
+    {
+        alert("请确保文件为图像类型");
+        return;
+    }    
+    var reader = new FileReader();
+    var slice=files.slice(0,4);
+    reader.readAsArrayBuffer(slice);//将Blob对象读取成一个ArrayBuffer对象
+    var type;
+    reader.onload = function(e)//数据读取成功完成时触发
+    {
+    	var buffer=this.result;
+    	var view=new DataView(buffer);
+    	var magic=view.getInt32(0,false);
+    	if(magic<0)
+    	magic+=0x100000000;
+    	magic=magic.toString(16).toUpperCase();
+    	if(magic.indexOf('FFD8FF')>=0)
+    	type="jpg文件";
+    	if(magic.indexOf('89504E47')>=0)
+    	type="png文件";
+    	if(magic.indexOf('47494638')>=0)
+    	type="gif文件";
+    	if(magic.indexOf('49492A00')>=0)
+    	type="tif文件";
+    	if(magic.indexOf('424D')>=0)
+    	type="bmp文件";
+       var result=document.getElementById("result");
+       //在页面上显示文件
+       result.innerHTML = '您选择的文件类型为'+type;
+    }
+}
+	</script>
+	<body>
+		请选择图像文件：<input type="file" id="file" onchange="fileonchange()"><br>
+		<output id="result"></output>
+	</body>
+</html>

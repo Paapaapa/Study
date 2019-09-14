@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>跨域通信示例</title>
+<script type="text/javascript">
+// (1) 监听message事件
+window.addEventListener("message", function(ev) {
+  // (2) 忽略指定URL地址之外的页面传过来的消息
+  if (ev.origin != "http://localhost:8020")  return;
+  //ev.origin表示获取消息的发送源（域名加端口号）
+  // (3) 显示消息
+  alert("从"+ev.origin + "那里传过来的消息:\n\"" + ev.data + "\"");
+}, false);
+function hello() 
+{
+  var iframe = window.frames[0];
+  // (4) 传递消息
+  iframe.postMessage("你好", "http://localhost:8020/HTML5%2bCSS3%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97-%E9%99%86%E5%87%8C%E7%89%9B/%E7%AC%AC11%E7%AB%A0%20%E9%80%9A%E4%BF%A1API/11-1%2b11-2%20%E8%B7%A8%E5%9F%9F%E9%80%9A%E4%BF%A1%E7%A4%BA%E4%BE%8B/11-2%20%E8%B7%A8%E5%9F%9F%E9%80%9A%E4%BF%A1%E7%9A%84iframe.html?__hbt=1517216125025");
+  //向其他窗口发送消息postMessage(发送的消息文本或任何js对象，接收消息的对象窗口的URL地址)
+}
+</script>
+</head>
+<body>
+<h1>跨域通信示例</h1>
+<iframe width="400" src="11-2 跨域通信的iframe.html" onload="hello()">
+</iframe>
+</body>
+</html>

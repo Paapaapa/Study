@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Blob对象的slice方法</title>
+	</head>
+	<script>
+		var files=document.getElementById('file').files[0];
+		if(file)
+		{
+			var fileclone=file.slice();//复制file对象
+			var fileclone2=file.slice(0,file.size);//复制file对象
+			var fileclone3=file.slice(-(Math.round(file.size/2)));////复制file对象后半部分
+			var fileclone4=file.slice(0,Math.round(file.size/2));//复制file对象的前半部分
+			var fileclone5=file.slice(0,-150,"application/experimental");
+		}
+	</script>
+	<body>
+		
+	</body>
+</html>

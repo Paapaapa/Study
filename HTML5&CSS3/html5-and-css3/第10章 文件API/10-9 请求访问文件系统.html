@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>请求访问文件系统</title>
+	</head>
+	<script>
+		window.requestFileSystem=window.requestFileSystem||window.webkitRequestFileSystem;
+		var fs=null;
+		if(window.requestFileSystem)
+		{
+			initFS();
+		}
+		function initFS()
+		{
+			window.requestFileSystem(window.TEMPORARY,1024*1024,
+				function(f)
+				{
+					fs=f;
+					alert("请求成功");
+				},errorhandler);
+		}
+		
+		function errorhandler(e)
+		{
+			var msg='';
+			switch(e.code)
+			{
+				case FileError.QUOTA_EXCEEDED_ERR:msg='文件系统使用的存储空间的尺寸超过磁盘限额控制中指定的空间尺寸';break;
+				case FileError.NOT_FOUND_ERR:msg='未找到文件或目录';break;
+				case FileError.SECURITY_ERR:msg='操作不当引起安全错误';break;
+				case FileError.INVALID_MODIFICATION_ERR:msg='对文件或目录所指定的操作不能执行';break;
+				case FileError.INVALID_STATE_ERR:msg='指定状态无效';break;
+				case FileError.ABORT_ERR:msg='当前操作被终止';break;
+				case FileError.NOT_READABLE_ERR:msg='指定目录或文件不可读';break;
+				case FileError.ENCODING_ERR:msg='文字编码错误';break;
+				case FileError.TYPE_MISMATCH_ERR:msg='用户企图访问目录或文件，但是用户访问的目录实际是文件或访问的文件实际是目录';break;
+				case FileError.PATH_EXISTS_ERR:msg='用户指定路径不存在需要访问的目录或文件';break;
+			}
+			document.getElementById("result").innerHTML='当前操作引发错误：'+msg;
+		}
+	</script>
+	<body>
+		<output id="result"></output>
+	</body>
+</html>

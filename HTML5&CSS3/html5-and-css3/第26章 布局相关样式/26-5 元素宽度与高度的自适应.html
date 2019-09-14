@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>自适应</title>
+	</head>
+	<style>
+		#container{
+			display:flex;
+			border:solid 5px blue;
+			width:500px;
+			height: 300px;
+			/*flex-wrap:wrap;控制换行nowrap,wrap-reverse
+			flex-direction: row;/*column*/
+			/*可合并为:*/
+			flex-flow:row wrap;
+		}
+			#text-a,#text-b,#text-c{
+				box-sizing:border-box;
+				font-size:1.5em;
+			font-weight:bold;
+			width:250px;
+			/*flex-shrink: 1;*/
+		}
+		#text-a{
+			background: orange;
+			/*flex:2;*/
+		}
+			#text-b{
+			background: yellow;
+			/*flex:1;*/
+			/*flex-shrink: 3;*/
+		}
+			#text-c{
+			background: limegreen;
+			/*flex:1;*/
+		}
+		
+	</style>
+	<body>
+		<div id="container">
+			<div id="text-a">aaa</div>
+			<div id="text-b">bbb</div>
+			<div id="text-c">ccc</div>
+		</div>
+	</body>
+</html>

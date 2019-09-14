@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>简单表单示例</title>
+    </head>
+    <body>
+        <form name="form1">
+            <label for=username>姓名</label>
+            <input name=username id=username type=text required /><br/>
+            <label for=age>年龄</label>
+            <input name=age id=age type=number min=0 max=100/><br/>
+            <label for=birthday>出生日期</label>
+            <input name=birthday id=birthday type=date step="3"/><br/>
+            <label for=email>Email</label>
+            <input name=email id=email type=email required /><br/>
+            <label for=url>个人主页</label>
+            <input name=url id=url type=url /><br/>
+            <input type=time>
+            <input type="datetime-local" />
+            <input type="month">
+            <input type=week>
+            <label for=memo>个人简介</label>
+            <textarea name=memo id=memo required ></textarea><br/>
+            <input type=submit>
+        </form>
+    </body>
+</html>
+<!--
+将step属性省略时各时间元素的默认增减幅度
+date
+1日
+datetime
+1秒
+datetime-local
+1秒
+month
+1个月
+week
+1周
+time
+1秒
+
+可使用JS:
+document.forms[0].date.stepUp(5)//向上变更
+document.forms[0].date.stepDown(5)//向下变更
+-->

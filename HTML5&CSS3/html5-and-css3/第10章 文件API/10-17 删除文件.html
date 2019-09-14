@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>删除文件</title>
+	</head>
+	<script>
+		function deletefile()
+		{
+			window.webkitRequestFileSystem(
+				PERSISTENT,
+				1024,
+				function(fs)
+				{
+					var filename=document.getElementById("filename").value;
+					fs.root.getFile(
+						filename,
+						{create:false},
+						function(fileEntry)
+						{
+							fileEntry.remove(//删除文件
+								function(){//成功执行时调用函数
+									document.getElementById("result").innerHTML=fileEntry.name+'文件被删除';								
+								},errorhandler);
+						},errorhandler);
+				},errorhandler);
+		}
+		
+		function errorhandler()//失败时调用函数
+		{
+			alert('失败');
+		}
+	</script>
+	<body>
+		<h1>删除文件</h1>
+		<form>
+			文件名：<input type="text" id="filename" value="test.txt"><br>
+				<input type="button" value="删除文件" onclick="deletefile()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

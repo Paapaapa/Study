@@ -1,0 +1,8 @@
+﻿CACHE MANIFEST
+#此处没有写明CACHE类别，没有指定类别直接书写资源文件时，浏览器将他们视为CACHE类别
+other.html
+hello.js
+images/myphoto.jpg
+NETWORK：
+http://Lulingniu/NotOffline
+NotOffline.asp

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>justify-content</title>
+	</head>
+	<style>
+	#container{
+		display:flex;
+		border:solid 5px blue;
+		flex-direction:row;
+		width:600px;
+		height:30px;
+		justify-content: flex-end;/*flex-start,center,space-between,space-around*/
+	}
+	#text-a{
+		background-color: orange;
+		width:100px;
+	}
+	#text-b{
+		background-color: yellow;
+		width:150px;
+	}
+	#text-c{
+		background-color: limegreen;
+		width:200px;
+	}
+	</style>
+	<body>
+		<div id="container">
+			<div id="text-a">aaaa</div>
+			<div id="text-b">aaaa</div>
+			<div id="text-c">aaaa</div>
+		</div>
+	</body>
+</html>

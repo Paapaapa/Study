@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>labels属性使用示例</title>
+	</head>
+	<script>
+		function validate()
+		{
+			var txtname=document.getElementById("txtname");
+			var btn =document.getElementById("btnvalid");
+			var form=document.getElementById("test");
+			if(txtname.value.trim()=="")
+			{
+				if(txtname.labels.length==1)
+				{
+					var label=document.createElement("label");
+					label.setAttribute("for","txtname");
+					form.insertBefore(label,btn);
+					txtname.labels[1].innerHTML="请输入姓名";
+					txtname.labels[1].setAttribute("style","font-size:9px;color:red");
+				}
+			}
+			else if(txtname.labels.length>1)
+			form.removeChild(txtname.labels[1]);
+		}
+	</script>
+	<body>
+		<form id="test">
+			<label id=label for=txtname>姓名：</label>
+			<input id=txtname>
+			<input type=button id=btn value=yanzheng onclick=validate()>
+		</form>
+	</body>
+</html>
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-21
+	描述：
+	H5中，为所有可使用标签的表单元素（非隐藏input元素，button,select,textarea,meter,output,progress,keygen等元素）定义一个labels
+	属性，属性值为一个NodeList对象，代表该元素绑定的标签元素构成的集合
+-->

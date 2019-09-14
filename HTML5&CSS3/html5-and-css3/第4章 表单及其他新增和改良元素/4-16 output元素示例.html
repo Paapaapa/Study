@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<title>output元素示例</title>
+</head>
+<script>
+	function change()
+	{
+		var num=document.getElementById("range1").value;
+		document.getElementById("op").value=num;
+	}
+</script>
+<form id="testform">
+请选择一个数值：
+<input id="range1" type=range min=0 max=100 step=5 value=10 onchange=change()>
+<output id="op">10</output>
+</form>
+
+<!--
+	output元素必须从属于一个表单，定义不同类型的输出
+-->

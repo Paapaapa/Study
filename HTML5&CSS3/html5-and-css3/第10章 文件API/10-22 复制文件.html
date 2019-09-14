@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>复制文件</title>
+	</head>
+	<script>
+		window.requestFileSystem=window.requestFileSystem||window.webkitRequestFileSystem;
+		
+		function copyfile()
+		{
+			var src=document.getElementById("src").value;
+			var dest=document.getElementById("dest").value;
+			var filename=document.getElementById("filename").value;
+			window.requestFileSystem(window.PERSISTENT,1024*1024,
+				function(fs)
+				{
+					copy(fs.root,src+'/'+filename,dest+'/');
+				},errorhandler);
+		}
+		//也可以复制目录，外面套目录，里面换成目录的copyTo方法
+		function copy(cwd,src,dest)
+		{
+			cwd.getFile(src,{create:false},
+			function(fileentry)
+			{
+				cwd.getDirectory(dest,{create:false},
+				function(direntry)
+				{
+					fileentry.copyTo(direntry,fileentry.name,//复制文件copyTo(目标目录，复制后文件名，成功复制后执行函数，失败后执行函数)
+					function()
+					{
+						document.getElementById("result").innerHTML='文件复制成功'
+					},errorhandler);	
+				},errorhandler);
+			},errorhandler);
+		}
+		
+		function errorhandler()
+		{
+			alert('失败');
+		}
+	</script>
+	<body>
+		<h1>复制文件</h1>
+		<form>
+			源目录：<input type="text" id="src"><br>
+			目标目录：<input type="text" id="dest"><br>
+			复制文件：<input type="text" id="filename"><br />
+			<input type="button" value="复制文件" onclick="copyfile()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-28
+	描述：
+	也可移动文件或目录，把copyTo换成moveTo即可
+	区别在于移动会把原来的文件或目录删掉，复制不会
+-->

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>SharedWorker</title>
+	</head>
+	<script>
+		function window_onload()
+		{
+			var worker=new SharedWorker('14-12 test.js');//SharedWorker被创建时一个MessagePort对象也被创建，可通过SharedWorker的port属性访问
+			var div=document.getElementById('div1');
+			worker.port.onmessage=function(e)
+			{
+				div.innerHTML=e.data;
+			}
+		}
+	</script>
+	<body onload="window_onload()">
+		<div id="div1"></div>
+	</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>文件重命名</title>
+	</head>
+	<script>
+	window.requestFileSystem=window.requestFileSystem||window.webkitRequestFileSystem;
+		//文件重命名
+		function renamefile()
+		{
+			var folder=document.getElementById("folder").value;
+			var oldname=document.getElementById("oldname").value;
+			var newname=document.getElementById("newname").value;
+			window.requestFileSystem(window.PERSISTENT,1024*1024,
+				function(fs)
+				{
+					rename(fs.root,folder+'/'+oldname,newname,folder+'/');
+				},errorhandler);
+		}
+		
+		function rename(cwd,oldname,newname,folder)
+		{//文件重命名只需要将移动源目录和目标目录指定为同一个目录，并指定一个新名字即可
+			cwd.getFile(oldname,{create:false},
+			function(fileentry)
+			{
+				cwd.getDirectory(folder,{create:false},
+				function(direntry)
+				{
+					fileentry.moveTo(direntry,newname,
+					function()
+					{
+						document.getElementById("result").innerHTML='修改文件名成功，新文件名：'+newname;
+					},errorhandler);	
+				},errorhandler);
+			},errorhandler);
+		}
+		
+		function errorhandler()
+		{
+			alert('失败');
+		}
+	</script>
+	<body>
+		<h1>文件重命名</h1>
+		<form>
+			目录：<input type="text" id="folder"><br>
+			文件名：<input type="text" id="oldname"><br>
+			新文件名：<input type="text" id="newname"><br />
+			<input type="button" value="文件重命名" onclick="renamefile()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>3D缩放变形</title>
+	</head>
+	<style>
+		div{
+			width:300px;
+			height:100px;
+			background-color:yellow;
+			text-align:center;
+			transform: rotateY(45deg);
+		}
+	</style>
+	<body>
+		<div id="div">abcdefg</div>
+		<input type="button" value="X" onclick="scalex()">
+		<input type="button" value="Y" onclick="scaley()">
+		<input type="button" value="Z" onclick="scalez()">
+		<script>
+			var n,rotint,rotxint,rotyint,rotzint;
+			var div=document.getElementById("div");
+			
+			function scalex()
+			{
+				n=1;
+				clearInterval(rotxint);
+				rotxint=setInterval("startx()",10);
+			}
+			
+			function startx()
+			{
+				n=n+0.1;
+				div.style.transform="scaleX("+n+")";
+				if(n>=2)
+				{
+					clearInterval(rotxint);
+					n=0;
+				}
+			}
+			
+			function scaley()
+			{
+				n=1;
+				clearInterval(rotyint);
+				rotyint=setInterval("starty()",10);
+			}
+			
+			function starty()
+			{
+				n=n+0.1;
+				div.style.transform="scaleY("+n+")";
+				if(n>=2)
+				{
+					clearInterval(rotyint);
+					n=0;
+				}
+			}
+			
+			function scalez()
+			{
+				n=1;
+				clearInterval(rotzint);
+				rotzint=setInterval("startz()",10);
+			}
+			
+			function startz()
+			{
+				n=n+0.1;
+				div.style.transform="scaleZ("+n+")";
+				if(n>=2)
+				{
+					clearInterval(rotzint);
+					n=0;
+				}
+			}
+		</script>
+	</body>
+</html>

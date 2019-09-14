@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>创建及下载二进制文件</title>
+	</head>
+	<script>
+		function blob()
+		{
+			var texts=document.getElementById("text").value;
+			var blob;
+			var result=document.getElementById("result");
+			if(!window.Blob)
+			result.innerHTML="浏览器不支持Blob对象";
+			//Blob中数据为文字时默认使用UTF8格式
+			else blob=new Blob([text]);//创建Blob对象new Blob(一个数组（可以存放任意数量个ArrayBuffer,ArrayBufferView,Blob,String对象），用于指定type属性值（可选）)
+			if(window.URL)
+			{
+				result.innerHTML="<a download href='"+window.URL.createObjectURL(blob)+"' target='_blank'>文件下载</a>";//使用createObjectURL方法创建文字链接
+			}
+		}
+	</script>
+	<body>
+		<textarea id="text" placeholder="输入文字"></textarea><br />
+		<button id="btndownload" onclick="blob()">创建下载二进制文件</button>
+		<output id="result"></output>
+	</body>
+</html>

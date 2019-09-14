@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Server-Sent Events API使用示例</title>
+	</head>
+	<script>
+		if(typeof(EventSource)!=="undefined")
+		{
+			var source=new EventSource("test.php");//代表事件来源
+			/*new EventSource("test.php",{withCredentials:false})
+			 * 后一参数值为可选参数，用于指定当事件源为跨域事件源时，当客户端从该事件源上接收事件及数据后，若被设定为true，则下次可重用该连接，无需建立新连接
+			 */
+			source.onmessage=function(event)
+			{//接收到服务端发送过来的事件触发该事件
+				document.getElementById("result").innerHTML+=event.data+"<br>";//event.data获取服务器发来的数据
+			/*
+			 * 服务器端发送的数据只能以一个字符串的形式进行发送
+			 * 当想让服务器端发送一个对象时，需要在服务器端将该对象以一个JSON格式的字符串形式发送
+			 * 在客户端接收到字符串后，再把它还原为一个JSON对象
+			 */
+			};
+		}else{
+			document.getElementById("result").innerHTML="对不起，您的浏览器不支持Server-Sent Events "
+		}
+		
+	</script>
+	<body>
+		<div id="result"></div>
+	</body>
+</html>

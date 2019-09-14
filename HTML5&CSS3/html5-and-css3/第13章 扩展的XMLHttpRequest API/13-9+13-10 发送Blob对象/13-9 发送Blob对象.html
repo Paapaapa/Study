@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>发送Blob对象</title>
+	</head>
+	<script>
+		window.URL=window.URL||window.webkitURL;
+		//复制当前页面
+		function uploaddocument()
+		{
+			var bb=new Blob([document.documentElement.outerHTML]);
+			var xhr=new XMLHttpRequest();
+			xhr.open('POST','13-10 test.php?filename='+getfilename(),true);
+			var progressbar=document.getElementById('progress');
+			xhr.upload.onprogress=function(e)
+			{
+				if(e.lengthComputable)
+				{
+					progressbar.value=(e.loaded/e.total)*100;
+					document.getElementById('result').innerHTML='已完成进度：'+progressbar.value+'%';
+				}
+			}
+			xhr.send(bb);
+		}
+		//获取当前页面文件名
+		function getfilename()
+		{
+			var url=window.location.href;
+			var pos=url.lastIndexOf("\\");
+			if(pos==-1)//表示为本地文件
+			{
+				pos=url.lastIndexOf("/");//本地文件路径分隔符为/
+			}
+			var filename=url.substring(pos+1);//从url中获得文件名
+			return filename;
+		}
+	</script>
+	<body>
+		<input type="button" value="复制页面文件" onclick="uploaddocument()"><br>
+		<progress min="0" max="100" value="0" id="progress"></progress>
+		<output id="result"></output>
+	</body>
+</html>

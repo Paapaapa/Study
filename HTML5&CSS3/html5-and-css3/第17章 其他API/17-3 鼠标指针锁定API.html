@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>鼠标指针锁定API</title>
+	</head>
+	<body>
+		<button onclick="lockpointer()">锁定鼠标指针</button>
+		<div id="div"></div>
+		<script>
+			var pointerlock;
+			document.addEventListener("mousemove",function(e)
+			{
+				var movex=e.movementX||e.mozmovementX||e.webkitMovementX||0;
+				var movey=e.movementY||e.mozmovementY||e.webkitMovementY||0;
+			    console.log("movementX="+movex+",movementY="+movey);
+			},false);
+			
+			function fullscreenchange()
+			{
+				if(document.webkitFullscreenElement===pointerlock||document.mozFullscreenElement===pointerlock||document.fullscreenElement===pointerlock)
+				{
+					pointerlock.requestPointerLock=pointerlock.requestPointerLock||pointerlock.mozRequestPointerLock||pointerlock.webkitRequestPointerLock;
+					pointerlock.requestPointerLock();
+				}
+			}
+			
+			document.addEventListener('fullscreenchange',fullscreenchange,false);
+			document.addEventListener('mozfullscreenchange',fullscreenchange,false);
+			document.addEventListener('webkitfullscreenchange',fullscreenchange,false);
+			function pointerlockchange()
+			{
+				if(document.mozPointerLockElement===pointerlock||document.webkitPointerLockElement===pointerlock)
+				console.log("成功锁定鼠标指针");
+				else console.log("停止锁定");
+			}
+			document.addEventListener('pointerlockchange',pointerlockchange,false);
+			document.addEventListener('mozpointerlockchange',pointerlockchange,false);
+			document.addEventListener('webkitpointerlockchange',pointerlockchange,false);
+			function pointerlockerror()
+			{
+				console.log("出错");
+			}
+			document.addEventListener('pointerlockerror',pointerlockerror,false);
+			document.addEventListener('mozpointerlockerror',pointerlockerror,false);
+			document.addEventListener('webkitpointerlockerror',pointerlockerror,false);
+			function lockpointer()
+			{
+				pointerlocker=document.getElementById("div");
+				pointerlocker.requestFullscreen=pointerlocker.requestFullscreen||pointerlocker.mozRequestPointerLock||pointerlocker.webkitRequestFullScreen;
+				pointerlocker.requestFullscreen();
+			}
+		</script>
+	</body>
+</html>

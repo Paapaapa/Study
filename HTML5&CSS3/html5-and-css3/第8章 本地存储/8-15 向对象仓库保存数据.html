@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>向对象仓库保存数据</title>
+	</head>
+	<script>
+		window.indexedDB=window.indexedDB||window.webkitIndexedDB||window.mozIndexedDB||window.msIndexedDB;
+		window.IDBTransaction=window.IDBTransaction||window.webkitIDBTransaction||window.msIDBTransaction;
+		window.IDBKeyRange=window.IDBKeyRange||window.webkitIDBKeyRange||window.msIDBKeyRange;
+		window.IDBCursor=window.IDBCursor||window.webkitIDBCursor||window.msIDBCursor;
+		function savedata()
+		{
+			var dbname='indexeddbtest';//数据库名
+			var dbversion=20150607;//版本号
+			var idb;
+			var dbconnect=indexedDB.open(dbname,dbversion);
+			dbconnect.onsuccess=function(e)
+			{
+				idb=e.target.result;//是一个IDBDatabase对象，代表连接成功的数据库对象
+				//开启事务transaction(由仓库名组成的字符串数组(限定事务只针对这些仓库进行，若不想限定，可写为idb.objectStoreNames表示所有仓库)，模式)模式:readonly,readwrite
+				var tx=idb.transaction(['newusers'],"readwrite");
+				var store=tx.objectStore('newusers');//获取该事务对象作用范围内的某个仓库
+				var value={
+					userid:1,
+					username:'张三',
+					address:'住址'
+				};
+				var req=store.put(value);//保存数据，返回IDBRequest对象
+				/*
+				//主键为自增，内联主键时
+				store.put({username:'1',address:'1'});
+				//主键为内联，非自增主键
+				store.put({userid:1,username:'1',address:'1'});
+				//主键为外部主键（另行指定主键值）
+				store.put({username:'1',address:'1'},1);
+				
+				//add与put区别：put若主键值在仓库中已经存在时，则该条记录做更新操作；add的话直接保存失败
+				store.add({userid:1,username:'1',address:'1'});
+				*/
+				
+				req.onsuccess=function(e){
+					alert('数据保存成功！');
+				};
+				req.onerror=function(e){
+					alert('数据保存失败！');
+				};
+			};
+			
+			dbconnect.onerror=function()
+			{
+				alert('连接失败！');
+			};
+	    }		
+</script>
+	<body>
+		<input type="button" value="保存数据" onclick="savedata()">
+	</body>
+</html>
+
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-25
+	描述：
+	可以同时运行多个作用范围不重叠的读写事务
+	tx.abort()表示中止事务，事务结束时触发oncomplete事件
+	事务中止时触发onabort事件
+-->

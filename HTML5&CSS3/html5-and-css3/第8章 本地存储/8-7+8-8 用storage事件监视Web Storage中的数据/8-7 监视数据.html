@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>监视数据</title>
+	</head>
+	<script>
+		window.addEventListener('storage',function(event){
+			if(event.key=="test")//event.key值为在sessionStorage或localStorage中被修改的数据键名
+			{
+				var output=document.getElementById("output");
+				output.innerHTML="原有值："+event.oldValue;//event.oldValue值为在sessionStorage或localStorage中被修改前的值
+				output.innerHTML+="<br />新值："+event.newValue;//event.key值为在sessionStorage或localStorage中被修改后的值
+				output.innerHTML+="<br/>变动页面地址："+
+				utf8_decode(unescape(event.url));//event.key值为修改sessionStorage或localStorage中值的页面url地址
+				console.log(event.storageArea);//event.key值为被变动的sessionStorage或localStorage对象
+				
+				console.log(event.storageArea===localStorage);
+			}
+		},false);
+		
+		function utf8_decode(utftext)
+		{
+			var string="";
+			var i=0;
+			var c=c1=c2=0;
+			while(i<utftext.length)
+			{
+				c=utftext.charCodeAt(i);//返回字符的unicode编码
+				if(c<128)//Unicode码点范围为0到1114111。前128个Unicode码点的ASCII字符编码的直接匹配
+				{
+					string+=String.fromCharCode(c);//fromCharCode() 可接受一个指定的 Unicode 值，然后返回一个字符串
+					i++;
+				}else if((c>191)&&(c<224))
+				{
+					c2=utftext.charCodeAt(i+1);
+					string+=String.fromCharCode(((c&31)<<6)|(c2&63));
+					i+=2;
+				}
+				else{
+					c2=utftext.charCodeAt(i+1);
+					c3=utftext.charCodeAt(i+2);
+					string+=String.fromCharCode(((c&15)<<12)|((c2&63)<<6)|(c3&63));
+					i+=3;
+				}
+			}
+			return string;
+		}
+	</script>
+	<body>
+		<output id="output"></output>
+	</body>
+</html>

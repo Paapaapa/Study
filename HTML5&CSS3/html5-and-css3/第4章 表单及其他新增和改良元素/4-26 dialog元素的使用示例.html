@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>dialog元素使用示例</title>
+	</head>
+	<body>
+		<input type="button" value="打开对话框" onclick="document.getElementById('dg').showModal();/*或show()*/document.getElementById('dg').returnValue='对话框的值';">
+		<dialog id="dg" open style="width:30%;text-align:center;">
+			<h1>用户登录</h1>
+			<main>
+				<form>
+					<label for="txtname" value="用户名：" >
+					<input type=text id="txtname"><br />
+					<label for="txtpass" value="密码：" >
+					<input type=password id="txtpass"><br />
+					<input type=button value="登录">
+					<input type=button value="关闭" onclick="document.getElementById('dg').close();alert(document.getElementById('dg').returnValue);">
+				</form>
+			</main>
+		</dialog>
+	</body>
+</html>
+
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-22
+	描述：
+	H5中，dialog元素代表一个对话框
+	showModal方法表示以模式对话框显示dialog元素
+	open属性表示页面打开时就显示dialog元素
+	returnValue属性为对话框设置或返回一个返回值
+-->

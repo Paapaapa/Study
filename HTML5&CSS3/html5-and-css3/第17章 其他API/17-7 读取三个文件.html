@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>读取三个文件</title>
+	</head>
+	<body>
+		<script>
+		function createxmlhttp()
+		{
+			if(window.ActiveXObject)
+			{
+				var objxmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			}else{
+				if(window.XMLHttpRequest)
+				{
+					var objxmlhttp=new XMLHttpRequest();
+				}else{
+					alert("can't intialize object");
+					return null;
+				}
+			}
+			return objxmlhttp;
+		}
+		
+		function getdata(filename)
+		{
+			var objxmlhttp=createxmlhttp();
+			objxmlhttp.open("GET",filename,true);
+			objxmlhttp.onreadystatechange=function()
+			{
+				if(objxmlhttp.readyState==4)
+				{
+					if(objxmlhttp.status==200)
+					{
+						var result=document.getElementById("result");
+						result.innerHTML+=objxmlhttp.responseText+"<br>";
+					}else alert("读取失败");
+				}
+			}
+			objxmlhttp.send();
+		}
+		
+		function read()
+		{
+			getdata("1.txt");
+			getdata("2.txt");
+			getdata("3.txt");
+		}
+	</script>
+	<input type="button" value="读取文件" onclick="read()">
+	<div id="result" style="white-space: pre;"></div>
+	</body>
+</html>

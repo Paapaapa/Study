@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>atob方法</title>
+	</head>
+	<script>
+		var canvas;
+		function draw(id)
+		{
+			canvas=document.getElementById(id);
+			var context=canvas.getContext('2d');
+			context.fillStyle="rgb(0,0,255)";
+			context.fillRect(0,0,canvas.width,canvas.height);
+			context.fillStyle="rgb(255,255,0)";
+			context.fillRect(10,20,50,50);
+		}
+		
+		function imgsave()
+		{
+			var data=canvas.toDataURL("image/jpg");
+			data=data.replace("data:image/jpg;base64,","");
+			var xhr=new XMLHttpRequest();
+			xhr.open("POST","uploadimg.php");
+			xhr.sendAsBinary(window.atob(data));//atob方法将一串经过Base64编码后的Base64格式的字符串进行解码处理
+		}
+	</script>
+	<body onload="draw('canvas')">
+		<input type="button" value="上传图片" onclick="imgsave()">
+		<br>
+		<canvas id="canvas" width="400" height="300"></canvas>
+	</body>
+</html>

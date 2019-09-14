@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>读取目录</title>
+	</head>
+	<script>
+		function readdirectory()
+		{
+			window.webkitRequestFileSystem(
+				PERSISTENT,
+				1024,
+				function(fs)
+				{
+					var dirreader=fs.root.createReader();//返回被创建的DirectoryEntry
+					var entries=[];
+					var readentries=function()//创建函数
+					{
+						dirreader.readEntries(//读取目录
+							function(results)//读取成功时执行函数，参数为被读取的目录中目录及文件的集合
+							{//不能保证一次性能读取出目录中所有目录和文件，所以要多次调用readentries方法，直到集合长度为0
+								if(!results.length)
+								{
+									listresults(entries.sort());
+								}
+								else{
+									entries=entries.concat(toArray(results));//拼接数组
+									readentries();
+								}
+							},errorhandler);
+					};
+					readentries();//调用这个函数
+				},errorhandler);
+		}
+
+        function listresults(entries)
+        {
+        	var type;
+        	entries.forEach(function(entry,i)
+        	{
+        		if(entry.isFile)
+        			type="文件："+entry.name;
+                else type="目录："+entry.name;
+                document.getElementById("result").innerHTML+=type+"<br>";
+        	});
+        }
+        
+        function toArray(list)
+        {
+        	return Array.prototype.slice.call(list||[]);//利用Array原型引用将list转化为数组
+        }
+        
+        function errorhandler(e)
+        {
+        	alert('失败')
+        }
+	</script>
+	<body>
+		<h1>读取目录</h1>
+		<form>
+			<input type="button" value="读取目录" onclick="readdirectory()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

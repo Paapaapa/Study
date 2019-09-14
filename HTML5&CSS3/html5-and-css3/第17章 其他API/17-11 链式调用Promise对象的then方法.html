@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>链式调用Promise对象的then方法</title>
+	</head>
+	<body>
+		<script>
+		function createxmlhttp()
+		{
+			if(window.ActiveXObject)
+			{
+				var objxmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			}else{
+				if(window.XMLHttpRequest)
+				{
+					var objxmlhttp=new XMLHttpRequest();
+				}else{
+					alert("can't intialize object");
+					return null;
+				}
+			}
+			return objxmlhttp;
+		}
+		
+		function read()
+		{
+			var filename="user.json";
+		    var promise=new Promise(function(resolve,reject)//resolve,reject都是回调函数
+			{//做一些事情，可以是异步的，然后···
+			var objxmlhttp=createxmlhttp();
+			objxmlhttp.open("GET",filename,true);
+			objxmlhttp.onreadystatechange=function()
+			{
+				if(objxmlhttp.readyState==4)
+				{
+					if(objxmlhttp.status==200)
+					{
+						resolve(objxmlhttp.responseText);//一切正常
+					}else {
+						reject();//处理失败
+					}
+				}
+			}
+			objxmlhttp.send();
+			});
+		promise.then(function(response)
+		{//执行成功的回调函数
+			return JSON.parse(response);
+		},function(){//执行失败的回调函数
+			alert("读取失败");
+		}).then(function(obj)
+		{
+			document.getElementById("number").value=obj.number;
+			document.getElementById("name").value=obj.name;
+			document.getElementById("age").value=obj.age;
+		});
+		}
+		</script>
+		<form id="form">
+			<input type="button" value="读取用户资料" onclick="read()">
+			学号：<input type="text" id="number"><br>
+			姓名：<input type="text" id="name"><br>
+			年龄：<input type="number" id="age">
+		</form>
+	</body>
+</html>

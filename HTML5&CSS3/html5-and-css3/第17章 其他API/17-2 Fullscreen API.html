@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Fullscreen API</title>
+		<style>
+			html:-moz-full-screen{
+				background: red;
+			}
+			html:-webkit-full-screen{
+				background: red;
+			}
+			html:fullscreen{
+				background: red;
+			}
+		</style>
+	</head>
+	<body>
+		<input type="button" id="btn" value="全屏显示" onclick="toggle()">
+		<div style="width:100%;" id="fullscreenstate">非全屏显示</div>
+	</body>
+	<script>
+		var docele=document.documentElement;
+		var fullscreenstate=document.getElementById("fullscreenstate");
+		var btn=document.getElementById("btn");
+		fullscreenstate.style.height=docele.clientHeight+"px";
+		document.addEventListener("fullscreenchange",function(){
+			fullscreenstate.innerHTML=(document.fullscreen)?"全屏显示":"非全屏显示";
+			btn.value=(document.fullscreen)?"非全屏显示":"全屏显示";
+		},false);
+		document.addEventListener("mozfullscreenchange",function(){
+			fullscreenstate.innerHTML=(document.mozFullScreen)?"全屏显示":"非全屏显示";
+			btn.value=(document.mozFullScreen)?"非全屏显示":"全屏显示";
+		},false);
+		document.addEventListener("webkitfullscreenchange",function(){
+			fullscreenstate.innerHTML=(document.webkitIsFullScreen)?"全屏显示":"非全屏显示";
+			btn.value=(document.webkitIsFullScreen)?"非全屏显示":"全屏显示";
+		},false);
+		
+		function toggle()
+		{
+			if(btn.value=="全屏显示")
+			{
+				if(docele.requestFullscreen)
+				{
+					docele.requestFullscreen();
+				}else if(docele.mozRequestFullScreen)
+				{
+					docele.mozRequestFullScreen();
+				}else if(docele.webkitRequestFullScreen)
+				{
+					docele.webkitRequestFullscreen();
+				}
+			}else{
+				if(document.exitFullscreen)
+				{
+					document.exitFullscreen();
+				}else if(document.mozCancelFullScreen)
+				{
+					document.mozCancelFullScreen();
+				}else if(document.webkitCancelFullScreen)
+				{
+					document.webkitCancelFullScreen();
+				}
+			}
+		}
+	</script>
+</html>

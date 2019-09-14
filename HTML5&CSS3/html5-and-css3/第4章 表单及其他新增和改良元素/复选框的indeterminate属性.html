@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>复选框的indeterminate属性</title>
+	</head>
+	<script>
+		var cb=document.getElementById("cb");
+		cb.indeterminate=true;
+		 function test()
+		 {
+		 	var cb=document.getElementById("cb");
+		 	if(cb.indeterminate)
+		 	{
+		 		alert("处于不明状态");
+		 	}
+		 	else{
+		 		if(cb.checked)
+		 		{
+		 			alert("处于被选状态");
+		 		}
+		 		else{
+		 			alert("处于非选状态");
+		 		}
+		 	}
+		 }
+	</script>
+	<body>
+		<form>
+			<input type="checkbox"  id="cb">test
+			<input type="button"  value="dianji" onclick="test()">
+		</form>
+	</body>
+</html>
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-21
+	描述：
+	H5中，indeterminate属性说明复选框处于“尚未明确是否选取”，值有true（处于不明状态）和false（处于非不明状态）
+-->

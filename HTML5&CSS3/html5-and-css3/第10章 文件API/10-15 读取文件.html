@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>读取文件</title>
+	</head>
+	<script>
+		function readfile()
+		{
+			window.webkitRequestFileSystem(
+				PERSISTENT,
+				1024,
+				function(fs)
+				{
+					var filename=document.getElementById("filename").value;
+					fs.root.getFile(//获取文件
+						filename,//文件名
+						{create:false},//创建文件必须为true，获取文件必须为false
+						function(fileEntry)//获取文件或创建文件成功时执行的函数
+						{//获取文件
+							fileEntry.file(
+								function(files)
+								{//执行成功回调函数
+								var reader=new FileReader();
+								reader.onloadend=function(e)
+								{//写操作结束时无论失败成功都触发
+								var txtarea=document.createElement('textarea');
+								txtarea.value=this.result;
+								document.body.appendChild(txtarea);
+								};
+								reader.readAsText(files);
+							},errorhandler);
+						},errorhandler);
+				},errorhandler);
+		}
+		
+		function errorhandler()
+		{
+			alert('失败');
+		}
+	</script>
+	<body>
+		<h1>读取文件</h1>
+		<form>
+			文件名：<input type="text" id="filename" value="test.txt"><br>
+			<input type="button" value="读取文件" onclick="readfile()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

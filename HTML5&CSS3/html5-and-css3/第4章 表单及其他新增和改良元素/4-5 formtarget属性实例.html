@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>formtarget属性实例</title>
+	</head>
+	<body>
+		<form id="testform" action="serve.jsp">
+			<input type="submit" name="s1" value=v1 formaction=s1.jsp formtarget="_self">
+			<input type="submit" name="s2" value=v2 formaction=s2.jsp formtarget="_blank">
+		</form>
+	</body>
+</html>
+
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-21
+	描述：
+	H5中，formtarget用于指定在何处打开表单提交后需要加载的页面
+值	                         描述
+_blank	在新窗口/选项卡中将表单提交到文档。
+_self	在同一框架中将表单提交到文档。（默认）
+_parent	在父框架中将表单提交到文档。
+_top	在整个窗口中将表单提交到文档。
+framename	在指定的框架中将表单提交到文档。
+-->

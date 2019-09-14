@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>连接indexedDB数据库</title>
+	</head>
+	<script>
+		window.indexedDB=window.indexedDB||window.webkitIndexedDB||window.mozIndexedDB||window.msIndexedDB;
+		window.IDBTransaction=window.IDBTransaction||window.webkitIDBTransaction||window.msIDBTransaction;
+		window.IDBKeyRange=window.IDBKeyRange||window.webkitIDBKeyRange||window.msIDBKeyRange;
+		window.IDBCursor=window.IDBCursor||window.webkitIDBCursor||window.msIDBCursor;
+		function connectdatabase()
+		{
+			var dbname='indexeddbtest';//数据库名
+			var dbversion=20120603;//版本号
+			var idb;
+			var dbconnect=indexedDB.open(dbname,dbversion);
+			dbconnect.onsuccess=function(e)
+			{
+				idb=e.target.result;//是一个IDBDatabase对象，代表连接成功的数据库对象
+				alert('连接成功!');
+			};
+			
+			dbconnect.onerror=function()
+			{
+				alert('连接失败！');
+			};
+			
+			idb.close();//关闭数据库连接
+		}
+	</script>
+	<body>
+		<input type="button" value="连接数据库" onclick="connectdatabase()" />
+	</body>
+</html>

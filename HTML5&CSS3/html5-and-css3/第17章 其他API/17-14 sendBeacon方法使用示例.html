@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>sendBeacon</title>
+	</head>
+	<script>
+		window.addEventListener("unload",logdata,false);
+		function logdata()
+		{
+			navigator.sendBeacon("http://localhost:8020","一些数据");
+			//当前页面被关闭时将立即发送数据sendBeacon（接收数据的服务器地址，被发送的数据）
+		}
+	</script>
+	<body>
+		<a href="www.baidu.com">百度一下</a>
+	</body>
+</html>

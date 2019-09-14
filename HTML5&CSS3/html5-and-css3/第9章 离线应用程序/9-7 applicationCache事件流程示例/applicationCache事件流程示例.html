@@ -1,0 +1,58 @@
+﻿<!DOCTYPE HTML>
+<html manifest="applicationCacheEvent.manifest">
+<head>
+<meta charset="UTF-8">
+<title>applicationCache事件流程示例</title>
+<script>
+function init() 
+{
+    var msg=document.getElementById("msg");
+    applicationCache.addEventListener("checking", function() {
+        msg.innerHTML+="checking<br/>";
+    }, true);
+    applicationCache.addEventListener("noupdate", function() {
+        msg.innerHTML+="noupdate<br/>";
+    }, true);
+    applicationCache.addEventListener("downloading", function() {
+        msg.innerHTML+="downloading<br/>";
+    }, true);
+    applicationCache.addEventListener("progress", function() {
+        msg.innerHTML+="progress<br/>";
+    }, true);
+    applicationCache.addEventListener("updateready", function() {
+        msg.innerHTML+="updateready<br/>";  
+    }, true);
+    applicationCache.addEventListener("cached", function() {
+        msg.innerHTML+="cached<br/>";          
+    }, true);
+    applicationCache.addEventListener("error", function() {
+	msg.innerHTML+="error<br/>"; 
+    }, true);
+}
+</script>
+</head>
+<body onload="init()">
+<h1>applicationCache事件流程示例</h1>
+<p id="msg"></p>
+</body>
+</html>
+<!--
+	作者：304752464@qq.com
+	时间：2018-01-26
+	描述：
+	首次打开网页，显示：
+	checking
+	downloading
+	progress
+	progress
+	cached
+	
+	再次打开网页，mainfest没有更新，显示：
+	noupdate
+	
+	再次打开网页，mainfest更新了，显示：
+	downloading
+	progress
+	progress
+	updateready
+-->

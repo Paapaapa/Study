@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>获取数据</title>
+	</head>
+	<script>
+	window.indexedDB=window.indexedDB||window.webkitIndexedDB||window.mozIndexedDB||window.msIndexedDB;
+		window.IDBTransaction=window.IDBTransaction||window.webkitIDBTransaction||window.msIDBTransaction;
+		window.IDBKeyRange=window.IDBKeyRange||window.webkitIDBKeyRange||window.msIDBKeyRange;
+		window.IDBCursor=window.IDBCursor||window.webkitIDBCursor||window.msIDBCursor;
+		function getdata()
+		{
+			var dbname='indexeddbtest';//数据库名
+			var dbversion=20150607;//版本号
+			var idb;
+			var dbconnect=indexedDB.open(dbname,dbversion);
+			dbconnect.onsuccess=function(e)
+			{
+				idb=e.target.result;//是一个IDBDatabase对象，代表连接成功的数据库对象
+				//开启事务transaction(由仓库名组成的字符串数组(限定事务只针对这些仓库进行，若不想限定，可写为idb.objectStoreNames表示所有仓库)，模式)模式:readonly,readwrite
+				var tx=idb.transaction(['newusers'],"readonly");
+				var store=tx.objectStore('newusers');//获取该事务对象作用范围内的某个仓库
+				//使用主键获取数据
+				/*var req=store.get(1);//获取数据，返回IDBRequest对象
+				
+				req.onsuccess=function(e){
+					if(this.result==undefined)
+					alert('没有找到符合条件的数据！');
+					else
+					alert("获取数据成功，用户名为"+this.result.username);
+				};
+				req.onerror=function(e){
+					alert('获取数据失败！');
+				};*/
+				//使用索引获取数据
+				var idx=store.index('usernameindex');//获取索引名称
+				var req=idx.get('张三');//获取数据，返回IDBRequest对象
+				
+				req.onsuccess=function(e){
+					if(this.result==undefined)//如果找不到，result属性值是undefined
+					alert('没有找到符合条件的数据！');
+					else
+					alert("获取数据成功，用户名为"+this.result.userid);
+				};
+				req.onerror=function(e){
+					alert('获取数据失败！');
+				};
+			};
+			
+			dbconnect.onerror=function()
+			{
+				alert('连接失败！');
+			};
+	   }		
+</script>
+<body>
+	<input type="button" value="获取数据" onclick="getdata()">
+</body>
+</html>

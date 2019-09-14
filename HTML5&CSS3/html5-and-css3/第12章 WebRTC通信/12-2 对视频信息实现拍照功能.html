@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>对视频信息实现拍照功能</title>
+	</head>
+	<body>
+		<video id='myvideo' width="400" height="300" autoplay></video>
+		<img src="" id="img" />
+		<canvas width='400' height="300" style='display:none;' id="canvas"></canvas>
+		<script>
+			navigator.getUserMedia=navigator.getUserMedia||navigator.webkitGetUserMedia||window.navigator.mozGetUserMedia;
+			window.URL=window.URL||window.webkitURL;
+			var video=document.getElementById('myvideo');
+			video.addEventListener('click',snapshot,false);
+			var canvas=document.getElementById('canvas');
+			var ctx=canvas.getContext('2d');
+			var localmediastream=null;
+			//访问本地摄像头
+			navigator.getUserMedia({video:true,audio:false},//是否捕捉视频和音频信息
+				function(stream)//stream是一个MediaStream对象，代表同步媒体数据流
+				{
+					video.src=window.URL.createObjectURL(stream);
+					localmediastream=stream;
+					//将一个MediaStream对象转换为一个Blob URL，以便将其设为一个video元素的属性
+				},
+			function(err)
+			{
+				console.log(err);
+			});
+			
+			function snapshot()
+			{navigator.getUserMedia=navigator.getUserMedia||navigator.webkitGetUserMedia||window.navigator.mozGetUserMedia;
+			window.URL=window.URL||window.webkitURL;
+			var video=document.getElementById('myvideo');
+			//访问本地摄像头
+			navigator.getUserMedia({video:true,audio:false},//是否捕捉视频和音频信息
+				function(stream)//stream是一个MediaStream对象，代表同步媒体数据流
+				{
+					video.src=window.URL.createObjectURL(stream);
+					//将一个MediaStream对象转换为一个Blob URL，以便将其设为一个video元素的属性
+				},
+			function(err)
+			{
+				console.log(err);
+			});
+				if(localmediastream)
+				{
+					ctx.drawImage(video,0,0);
+					document.getElementById('img').src=canvas.toDataURL('image/png');
+				}
+			}
+		</script>
+	</body>
+</html>

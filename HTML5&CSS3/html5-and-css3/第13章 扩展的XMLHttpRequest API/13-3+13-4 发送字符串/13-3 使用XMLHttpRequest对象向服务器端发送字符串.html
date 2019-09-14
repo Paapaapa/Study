@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>向服务器端发送字符串</title>
+	</head>
+<script>
+	function sendtext()
+	{
+		var txt=document.getElementById("text1").value;
+		var xhr=new XMLHttpRequest();
+		xhr.open('POST','13-4 服务器端php文件中内容.php',true);
+		xhr.responseType='text';
+		xhr.onload=function(e)
+		{
+			if(this.status==200)
+			{
+				document.getElementById("result").innerHTML=this.response;
+			}
+		};
+		xhr.send(txt);
+	}
+</script>
+	<body>
+		<form>
+			<input type="text" id="text1" />
+			<input type="button" value="发送数据" onclick="sendtext()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

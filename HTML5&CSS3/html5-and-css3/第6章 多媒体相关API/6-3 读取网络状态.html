@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>读取网络状态</title>
+	</head>
+	<script>
+		var video=document.getElementById("video");
+		video.addEventListener("progress",function(e){
+			var networkstate=document.getElementById("networkState");
+			if(video.networkState==2)
+			{
+				networkstate.innerHTML="加载中···【"+e.loaded+"/"+e.total+"byte】";
+			}else if(video.networkState==3)
+			{
+				networkstate.innerHTML="加载失败！";
+			}
+		},false);
+	</script>
+	<body>
+		<video src="我是否在你心中.mp4" controls="" width="900px" height="600px"></video>
+		<label id="networkState"></label>
+	</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>FileSystem API综合案例</title>
+	<style>
+		div{
+			padding:10px;
+			border:1px solid #ccc;
+		}
+		ul{
+			padding-left:0;
+		}
+		li{
+			list-style:none;
+		}
+		img{
+			vertical-align: middle;
+		}
+		button{
+			padding:5px 8px;
+			cursor:pointer;
+			text-shadow:1px 1px white;
+			font-weight:700;
+			font-size:10px;
+		}
+		body{
+			font:14px 宋体;
+		}
+	</style>
+	</head>
+	<script>
+		var fs;
+		var filelist;
+		window.requestFileSystem=window.requestFileSystem||webkitRequestFileSystem;
+		window.requestFileSystem(window.PERSISTENT,1024*1024,
+		function(filesystem)
+		{
+			fs=filesystem;
+			filelist=document.getElementById("filelist");
+			document.getElementById("myfile").disabled=false;
+			document.getElementById("btnreadroot").disabled=false;
+			document.getElementById("btndeletefile").disabled=false;
+			readroot();
+		},errorhandler);
+		
+		function readroot()
+		{
+			document.getElementById("result").innerHTML="";
+			for(var i=filelist.childNodes.length;i>0;i--)
+			{
+				var el=filelist.childNodes[i-1];
+				filelist.removeChild(el);
+			}
+			var dirreader=fs.root.createReader();
+			var entries=[];
+			var readentries=function()
+			{
+				dirreader.readEntries(
+					function(results)
+					{
+						if(!results.length)//长度为0
+						{
+							var fragment=document.createDocumentFragment();
+							for(var i=0,entry;entry=entries[i];i++)
+							{
+								var img=entry.isDirectory?'目录：':'文件：';
+								var li=document.createElement('li');
+								li.innerHTML=[img,'<span>',entry.name,'</span>'].join('');
+								fragment.appendChild(li);
+							}
+							filelist.appendChild(fragment);
+						}
+						else{
+							entries=entries.concat(toArray(results));
+							readentries();
+						}
+					},errorhandler);
+			};
+			readentries();
+		}
+		
+		function toArray(list)
+		{
+			return Array.prototype.slice.call(list||[],0);
+		}
+		
+		function change()
+		{
+			var files=document.getElementById("myfile").files;
+			for(var i=0,file;file=files[i];++i)
+			{
+				(function(f)
+				{
+					fs.root.getFile(file.name,{create:true},
+					function(fileentry)
+					{
+						fileentry.createWriter(
+							function(filewriter)
+							{
+							    filewriter.onwriteend=function(e)
+							    {
+							    	document.getElementById("result").innerHTML+='复制文件名为：'+f.name+'<br>';							    									
+							    };
+							    filewriter.onerror=errorhandler;
+							    filewriter.write(f);
+						},errorhandler);
+					},errorhandler);
+				})(file);
+			}
+		}
+		
+		function deleteall()
+		{
+			var dirreader=fs.root.createReader();
+			var entries=[];
+			var deleteentries=function()
+			{
+				dirreader.readEntries(
+					function(results)
+				    {
+				    	if(!results.length)
+				    	{
+				    		for(var i=entries.length-1,entry;entry=entries[i];i--)
+				    		{
+				    			if(entry.isDirectory)
+				    			{
+				    				entry.removeRecursively(function(){},errorhandler);		    				
+				    			}else{
+				    				entry.remove(function(){},errorhandler);
+				    			}
+				    		}
+				    		for(var i=filelist.childNodes.length;i>0;i--)
+				    		{
+				    			var el=filelist.childNodes[i-1];
+				    			filelist.removeChild(el);
+				    		}
+				    	}
+				    	else{
+				    		entries=entries.concat(toArray(results));
+				    		deleteentries();
+				    	}
+				    },errorhandler);
+			};
+			deleteentries();
+		}
+		
+		function errorhandler()
+		{
+			alert('失败');
+		}
+	</script>
+	<body>
+		<h1>FileSystem API综合实例</h1>
+		<div>
+			<input type="file" id="myfile" multiple disabled onchange="change()"/><br>
+			<button id="btnreadroot" disabled onclick="readroot()">读取根目录</button>
+			<button id="btndeletefile" disabled onclick="deleteall()">删除全部文件与目录</button>
+			<ul id="filelist"></ul>
+			
+		</div>
+		<output id="result" />
+	</body>
+</html>

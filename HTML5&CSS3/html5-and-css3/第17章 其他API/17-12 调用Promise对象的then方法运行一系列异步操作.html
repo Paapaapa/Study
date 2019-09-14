@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>调用Promise对象的then方法运行一系列异步操作</title>
+	</head>
+	<script>
+	function createxmlhttp()
+		{
+			if(window.ActiveXObject)
+			{
+				var objxmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			}else{
+				if(window.XMLHttpRequest)
+				{
+					var objxmlhttp=new XMLHttpRequest();
+				}else{
+					alert("can't intialize object");
+					return null;
+				}
+			}
+			return objxmlhttp;
+		}
+		
+		function getdata(filename)
+		{
+			return new Promise(function(resolve,reject)//resolve,reject都是回调函数
+			{//做一些事情，可以是异步的，然后···
+			var objxmlhttp=createxmlhttp();
+			objxmlhttp.open("GET",filename,true);
+			objxmlhttp.onreadystatechange=function()
+			{
+				if(objxmlhttp.readyState==4)
+				{
+					if(objxmlhttp.status==200)
+					{
+						alldata+=objxmlhttp.responseText+"<br>";
+						resolve();//一切正常
+					}else {
+						alert("读取失败")//处理失败
+					}
+				}
+			}
+			objxmlhttp.send();
+			});
+		}
+		
+		function read()
+		{
+			alldata="";
+			getdata("1.txt").then(function()
+			{
+				return getdata("2.txt");
+			}).then(function()
+			{
+				return getdata("3.txt");
+			}).then(function()
+			{
+				var result=document.getElementById("result");
+				result.innerHTML=alldata;
+			});
+		}
+	</script>
+	<input type="button" value="读取文件" onclick="read()">
+	<div id="result" style="white-space: pre;"></div>
+	</body>
+</html>

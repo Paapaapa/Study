@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>MutationObserver对象使用示例</title>
+	</head>
+	<body>
+		<div id="div" style="height:100px;width:100%;background-color:pink;"></div>
+		<input type="button" value="插入span元素" onclick="changediv()">
+		<script>
+			function onchange(mutationrecords,mutationobserver)
+			{
+				alert('检测到DOM变化');
+				console.log(mutationrecords);
+				console.log(mutationobserver);
+			}
+			var div=document.getElementById("div");
+			var mo=new window.MutationObserver(onchange);//参数为检测到页面变化时执行的函数
+			options={childList:true};//是否观察目标节点的子节点
+			mo.observe(div,options);//observe（被观察的目标节点，观察时使用的选项）
+			function changediv()
+			{
+				var span=document.createElement("span");
+				span.innerHTML="我是一个span元素";
+				div.appendChild(span);
+			}
+		</script>
+	</body>
+</html>

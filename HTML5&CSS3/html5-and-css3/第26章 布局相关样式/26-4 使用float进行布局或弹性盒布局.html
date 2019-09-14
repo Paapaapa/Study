@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style>
+		#container{
+			display: -moz-box;
+			display:-webkit-box;
+			display:flex;/*弹性盒布局*/
+			flex-direction: column;/*改变元素的排列方向*/
+		}
+		#left-sidebar{
+			/*float:left;*/
+			order:3;/*改变元素的显示顺序*/
+			width:200px;
+			padding:20px;
+			background-color:orange;
+		}
+		#contents{
+			/*float:left;*/
+			order:1;
+			flex:1;
+			/*width:300px;*/
+			padding:20px;
+			background: yellow;
+		}
+		#right-sidebar{
+			/*float:left;*/
+			order:2;
+			width:200px;
+			padding:20px;
+			background:limegreen;
+		}
+		#left-sidebar,#contents,#right-sidebar{
+			box-sizing:border-box;
+		}
+	</style>
+	<body>
+		<div id="container">
+			<div id="left-sidebar">
+				<h2>左侧边栏</h2>
+				<ul>
+					<li><a href="">超链接</a></li>
+					<li><a href="">超链接</a></li>
+					<li><a href="">超链接</a></li>
+				</ul>
+			</div>
+			<div id="contents">
+				<h2>内容</h2>
+				<p>aaaaaaaaaaaaaaaaa
+				bbbbbbbbbbbbbbbbbbbbb
+				cccccccccccccccccccc</p>
+			</div>
+			<div id="right-sidebar">
+				<h2>右侧边栏</h2>
+				<ul>
+					<li><a href="">超链接</a></li>
+					<li><a href="">超链接</a></li>
+					<li><a href="">超链接</a></li>
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>

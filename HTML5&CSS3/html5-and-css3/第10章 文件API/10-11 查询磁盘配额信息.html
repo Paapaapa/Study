@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>查询磁盘配额信息</title>
+	</head>
+	<script>
+		function queryquota()
+		{
+			//查询申请的磁盘配额信息
+			window.webkitStorageInfo.queryUsageAndQuota(PERSISTENT,
+			function(usage,quota)//获取成功执行回调函数
+			{//第一个参数是磁盘配额已用磁盘空间尺寸，第二个是磁盘配额指定的全部磁盘空间尺寸
+				var text="查询磁盘配额信息成功<br>已用磁盘空间：";
+				cal(usage,text);
+				text+="<br>磁盘配额的总空间：";
+				cal(quota,text);
+				document.getElementById("result").innerHTML=text;
+			},
+			errorhandler);
+		}
+		
+		function errorhandler(e)//申请失败执行回调函数
+		{
+			alert('申请失败！');
+		}
+		
+		function cal(usage,text)
+		{
+			var intbytes;
+			if(usage>=1024*1024*1024)
+				{
+					intbytes=Maths.floor(usage/(1024*1024*1024));
+					text+=intbytes+"GB";
+					usage=usage%(1024*1024*1024);
+				}
+				if(usage>=1024*1024)
+				{
+					intbytes=Maths.floor(usage/(1024*1024));
+					text+=intbytes+"MB";
+					usage=usage%(1024*1024);
+				}
+				if(usage>=1024)
+				{
+					intbytes=Maths.floor(usage/1024);
+					text+=intbytes+"KB";
+					usage=usage%1024;
+				}
+				text+=usage+"Bytes";
+				return text;
+		}
+	</script>
+	<body>
+		<h1>查询磁盘配额信息</h1>
+		<form>
+			<input type="button" value="查询磁盘配额信息" onclick="queryquota()">
+		</form>
+		<output id="result"></output>
+	</body>
+</html>

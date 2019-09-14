@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>修改数据</title>
+	</head>
+	<script>
+		function set()
+		{
+			localStorage.test=document.getElementById("text1").value;
+		}
+	</script>
+	<body>
+		请输入值：<input type="text" id="text1">
+		<button onclick="set()">设置</button>
+	</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>align-items</title>
+	</head>
+	<style>
+	#container{
+		display:flex;
+		border:solid 5px blue;
+		flex-direction:row;
+		width:600px;
+		align-items: flex-start;/*flex-end,center,baseline,stretch*/
+	}
+	#text-a{
+		background-color: orange;
+		width:100px;
+		font-size:12px;
+		align-self: flex-end;
+	}
+	#text-b{
+		background-color: yellow;
+		width:150px;
+		font-size:24px;
+	}
+	#text-c{
+		background-color: limegreen;
+		width:200px;
+		font-size:36px;
+	}
+	</style>
+	<body>
+		<div id="container">
+			<div id="text-a">aaaa</div>
+			<div id="text-b">aaaa</div>
+			<div id="text-c">aaaa</div>
+		</div>
+	</body>
+</html>

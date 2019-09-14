@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Page Visibility API</title>
+	</head>
+	<script>
+		var hidden,visibilitychange,videoelement;
+		if(typeof document.hidden!=="undefined")
+		{
+			hidden="hidden";
+			visibilitychange="visibilitychange";
+		}else if(typeof document.mozHidden!=="undefined")
+		{
+			hidden="mozHidden";
+			visibilitychange="mozvisibilitychange";
+		}else if(typeof document.msHidden!=="undefined")
+		{
+			hidden="msHidden";
+			visibilitychange="msvisibilitychange";
+		}else if(typeof document.webkitHidden!=="undefined")
+		{
+			hidden="webkitHidden";
+			visibilitychange="webkitvisibilitychange";
+		}
+		document.addEventListener(visibilitychange,handle,false);
+		function onload()
+		{
+			videoelement=document.getElementById("video");
+			videoelement.addEventListener('ended',videoended,false);
+			videoelement.addEventListener('play',videoplay,false);
+			videoelement.addEventListener('pause',videopause,false);
+		}
+		
+		function handle()
+		{
+			if(document[hidden])
+			videoelement.pause();
+			else videoelement.play();
+		}
+		
+		function play()
+		{
+			videoelement.play();
+		}
+		
+		function pause()
+		{
+			videoelement.pause();
+		}
+		
+		function playorpause()
+		{
+			if(videoelement.paused)
+			videoelement.play();
+			else videoelement.pause();
+		}
+		
+		function videoended(ev)
+		{
+			videoelement.currentTime=0;
+			this.pause();
+		}
+		
+		function videoplay(ev)
+		{
+			var btn=document.getElementById("btn");
+			btn.innerHTML="暂停";
+		}
+		
+		function videopause(ev)
+		{
+			var btn=document.getElementById("btn");
+			btn.innerHTML="播放";
+		}
+	</script>
+	<body onload="onload()">
+		<video id="video" src="../第6章 多媒体相关API/我是否在你心中.mp4" controls=""></video>
+		<button id="btn" onclick="playorpause()">播放</button>
+	</body>
+</html>
